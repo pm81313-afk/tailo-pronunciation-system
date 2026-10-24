@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tâi-lô 台灣台語羅馬字拼音互動教學與發音系統｜教育部辭典發音對照</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', '"Noto Sans TC"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            mondrian: {
+              red: '#D9381E',
+              blue: '#1B4D89',
+              yellow: '#F2C12E',
+              teal: '#147A6E',
+              cream: '#FAF7F0',
+              ink: '#18181B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF7F0;
+      color: #18181B;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      overflow-x: hidden;
+    }
+    .mondrian-card {
+      border: 3px solid #18181B;
+      box-shadow: 5px 5px 0px #18181B;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .mondrian-card:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0px #18181B;
+    }
+    .mondrian-btn {
+      border: 2.5px solid #18181B;
+      box-shadow: 3px 3px 0px #18181B;
+      transition: all 0.15s ease;
+    }
+    .mondrian-btn:hover:not(:disabled) {
+      transform: translate(-1.5px, -1.5px);
+      box-shadow: 4.5px 4.5px 0px #18181B;
+    }
+    .mondrian-btn:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #18181B;
+    }
+    .mondrian-border {
+      border: 2.5px solid #18181B;
+    }
+    .filter-active {
+      background-color: #D9381E !important;
+      color: #FFFFFF !important;
+    }
+    @keyframes pulse-wave {
+      0%, 100% { transform: scaleY(0.35); }
+      50% { transform: scaleY(1); }
+    }
+    .wave-bar {
+      animation: pulse-wave 0.7s infinite ease-in-out;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF7F0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #18181B;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Navigation & Mondrian Header -->
+  <header class="sticky top-0 z-40 bg-[#FAF7F0] border-b-4 border-zinc-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 bg-[#D9381E] mondrian-border flex items-center justify-center font-black text-white text-xl tracking-tighter rounded-lg">
+          TL
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-black tracking-tight text-zinc-900">Tâi-lô 台羅拼音互動數位展廳</h1>
+            <span class="hidden md:inline-block text-xs font-bold px-2 py-0.5 bg-[#F2C12E] mondrian-border rounded">教育部標準系統</span>
+          </div>
+          <p class="text-xs text-zinc-600 font-medium">聲母 18 ・ 韻母 72 ・ 八聲七調 ・ 連讀變調與即時發音合成</p>
+        </div>
+      </div>
+
+      <!-- Audio Engine Status Bar -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div id="audioStatusBadge" class="flex items-center gap-2 px-3 py-1.5 bg-white mondrian-border rounded-lg text-xs font-bold">
+          <span id="audioIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span id="audioStatusText">發音引擎就緒 (MOE 真人音檔 + 聲學合成)</span>
+        </div>
+        <button id="btnOpenGDriveModal" type="button" class="mondrian-btn bg-white hover:bg-zinc-100 text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5" title="Google Drive 圖床與教材資訊">
+          <span>🗂️ 教材來源</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <div class="bg-zinc-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex overflow-x-auto no-scrollbar">
+        <button type="button" data-tab="overview" class="nav-tab-btn px-4 sm:px-5 py-3 text-xs sm:text-sm font-bold border-r border-zinc-700 whitespace-nowrap bg-[#D9381E] text-white transition-colors">
+          🏛️ 總覽與音節拼讀機
+        </button>
+        <button type="button" data-tab="initials" class="nav-tab-btn px-4 sm:px-5 py-3 text-xs sm:text-sm font-bold border-r border-zinc-700 whitespace-nowrap hover:bg-zinc-800 transition-colors">
+          🗣️ 二、聲母展廳 (18個)
+        </button>
+        <button type="button" data-tab="finals" class="nav-tab-btn px-4 sm:px-5 py-3 text-xs sm:text-sm font-bold border-r border-zinc-700 whitespace-nowrap hover:bg-zinc-800 transition-colors">
+          🎵 三、韻母展廳 (72韻)
+        </button>
+        <button type="button" data-tab="tones" class="nav-tab-btn px-4 sm:px-5 py-3 text-xs sm:text-sm font-bold border-r border-zinc-700 whitespace-nowrap hover:bg-zinc-800 transition-colors">
+          📈 四、八聲七調與變調規則
+        </button>
+        <button type="button" data-tab="quiz" class="nav-tab-btn px-4 sm:px-5 py-3 text-xs sm:text-sm font-bold border-r border-zinc-700 whitespace-nowrap hover:bg-zinc-800 transition-colors">
+          🎯 聽音辨調互動挑戰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating Audio Player Toast -->
+  <div id="nowPlayingBar" style="display: none;" class="fixed bottom-4 right-4 z-50 max-w-sm w-full bg-zinc-900 text-white mondrian-card rounded-xl p-3.5">
+    <div class="flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-end gap-0.5 h-6 px-1.5 bg-[#D9381E] rounded">
+          <span class="w-1 h-4 bg-white wave-bar"></span>
+          <span class="w-1 h-5 bg-white wave-bar" style="animation-delay:0.15s"></span>
+          <span class="w-1 h-3 bg-white wave-bar" style="animation-delay:0.3s"></span>
+        </div>
+        <div class="truncate">
+          <div id="npTitle" class="text-sm font-black text-[#F2C12E] truncate">pi-á（觱仔）</div>
+          <div id="npSub" class="text-xs text-zinc-300 truncate">正在播放發音示範...</div>
+        </div>
+      </div>
+      <button id="btnStopAudio" type="button" class="px-2.5 py-1 bg-zinc-700 hover:bg-zinc-600 rounded text-xs font-bold shrink-0">停止</button>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+
+    <!-- ==================== TAB 1: OVERVIEW & SYLLABARY SYNTHESIZER ==================== -->
+    <section id="tab-overview" style="display: block;" class="space-y-8">
+      <!-- Mondrian Asymmetric Hero Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Main Hero Box (Col 7) -->
+        <div class="lg:col-span-7 bg-white mondrian-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute -top-10 -right-10 w-36 h-36 bg-[#F2C12E] rounded-full opacity-25 pointer-events-none"></div>
+          <div class="space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#D9381E] text-white text-xs font-black rounded-md mondrian-border">
+              <span>一、台語的「音節」結構</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-black text-zinc-900 leading-tight">
+              聲母 <span class="text-[#D9381E]">+</span> 韻母 <span class="text-[#1B4D89]">+</span> 聲調
+            </h2>
+            <p class="text-sm sm:text-base text-zinc-700 leading-relaxed">
+              台灣台語羅馬字拼音方案（簡稱<strong>台羅拼音 Tâi-lô</strong>）是教育部公告的標準拼音系統。只要掌握<strong>17個聲母（加1個零聲母）</strong>、<strong>5大類共72個韻母規則</strong>與<strong>8聲7調及連讀變調</strong>，免硬背就能拼讀所有台語詞彙！
+            </p>
+          </div>
+
+          <!-- Visual Syllable Formula Blocks -->
+          <div class="mt-6 grid grid-cols-3 gap-3 pt-4 border-t-2 border-zinc-900">
+            <div class="bg-[#D9381E]/10 mondrian-border rounded-xl p-3 text-center">
+              <div class="text-xs font-bold text-[#D9381E]">STEP 1. 聲母</div>
+              <div class="text-xl sm:text-2xl font-black text-zinc-900 mt-1">tsh</div>
+              <div class="text-xs text-zinc-600 mt-0.5">舌齒送氣音</div>
+            </div>
+            <div class="bg-[#1B4D89]/10 mondrian-border rounded-xl p-3 text-center">
+              <div class="text-xs font-bold text-[#1B4D89]">STEP 2. 韻母</div>
+              <div class="text-xl sm:text-2xl font-black text-zinc-900 mt-1">iunn</div>
+              <div class="text-xs text-zinc-600 mt-0.5">鼻化複元音</div>
+            </div>
+            <div class="bg-[#F2C12E]/25 mondrian-border rounded-xl p-3 text-center">
+              <div class="text-xs font-bold text-amber-900">STEP 3. 聲調</div>
+              <div class="text-xl sm:text-2xl font-black text-zinc-900 mt-1">第7調 (ū)</div>
+              <div class="text-xs text-zinc-600 mt-0.5">tshiūnn (象)</div>
+            </div>
+          </div>
+
+          <div class="mt-5 flex flex-wrap gap-3">
+            <button type="button" onclick="switchTab('initials')" class="mondrian-btn bg-[#D9381E] text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+              👉 開始學習 18 聲母
+            </button>
+            <button type="button" onclick="switchTab('finals')" class="mondrian-btn bg-[#1B4D89] text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+              👉 探索 72 韻母與例詞
+            </button>
+            <a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="mondrian-btn bg-white text-zinc-900 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl inline-flex items-center gap-1">
+              🔗 教育部臺灣台語常用詞辭典 ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Mondrian Stat Cards (Col 5) -->
+        <div class="lg:col-span-5 grid grid-cols-2 gap-4">
+          <div class="col-span-2 bg-[#1B4D89] text-white mondrian-card rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-200">Initials 聲母系統</span>
+              <h3 class="text-xl font-black mt-1">17 聲母 + 1 零聲母</h3>
+              <p class="text-xs text-sky-100 mt-1">雙唇音・舌尖音・舌根音・舌齒音・喉音・零聲母</p>
+            </div>
+            <button type="button" onclick="playPhonemeAudio('p', 'pi-á', '觱仔', '11914')" class="mondrian-btn bg-[#F2C12E] text-zinc-900 font-black text-xs px-3 py-2 rounded-lg shrink-0">
+              🔊 試聽示範
+            </button>
+          </div>
+
+          <div class="bg-[#F2C12E] text-zinc-900 mondrian-card rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-black uppercase">Finals 韻母系統</span>
+              <div class="text-3xl font-black mt-1">72 個</div>
+              <p class="text-xs font-medium mt-1">單元音・複元音・鼻化元音・鼻音韻母・入聲韻母・聲化韻母</p>
+            </div>
+            <button type="button" onclick="switchTab('finals')" class="mt-3 text-xs font-black underline text-left">查看完整分類 →</button>
+          </div>
+
+          <div class="bg-[#D9381E] text-white mondrian-card rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-black uppercase text-red-100">Tones 八聲七調</span>
+              <div class="text-2xl font-black mt-1">獅虎豹鱉...</div>
+              <p class="text-xs text-red-100 mt-1">第2、6聲同音合併標示7調，搭配口訣「5→7→3→2→1→7」</p>
+            </div>
+            <button type="button" onclick="switchTab('tones')" class="mt-3 text-xs font-black underline text-left">練習變調規則 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Tai-lo Syllable & Tone Synthesizer (互動音節拼讀發音器) -->
+      <div class="bg-white mondrian-card rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b-2 border-zinc-900">
+          <div>
+            <span class="text-xs font-black px-2.5 py-1 bg-[#147A6E] text-white rounded mondrian-border">INTERACTIVE LAB</span>
+            <h3 class="text-xl sm:text-2xl font-black mt-2">🎛️ 台羅音節互動拼讀與發音合成器</h3>
+            <p class="text-xs sm:text-sm text-zinc-600 mt-0.5">自由組合「聲母 + 韻母 + 聲調」，或直接輸入台羅拼音，即時產生調符標記、發音曲線與語音合成，並可一鍵查詢教育部台灣台語辭典！</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-zinc-700 flex items-center gap-1.5 bg-zinc-100 px-3 py-1.5 rounded-lg mondrian-border cursor-pointer">
+              <input type="checkbox" id="chkReadingRule" class="w-4 h-4 accent-[#D9381E]">
+              <span>套用簡報連讀提示（看著第2聲唸第1聲高平調）</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+          <!-- Controls (Col 7) -->
+          <div class="lg:col-span-7 space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Initial Select -->
+              <div>
+                <label for="synInitial" class="block text-xs font-black text-zinc-700 mb-1.5">1. 選擇聲母 (Initial)</label>
+                <select id="synInitial" class="w-full px-3 py-2.5 bg-[#FAF7F0] mondrian-border rounded-xl font-bold text-sm focus:outline-none">
+                  <option value="">(零聲母 Ø)</option>
+                  <optgroup label="雙唇音 (合唇音)">
+                    <option value="p">p (觱仔 pi-á)</option>
+                    <option value="ph">ph (簿仔 phōo-á)</option>
+                    <option value="m">m (毛筆 môo-pit)</option>
+                    <option value="b">b (帽仔 bō-á)</option>
+                  </optgroup>
+                  <optgroup label="舌尖音">
+                    <option value="t" selected>t (豬仔 ti-á)</option>
+                    <option value="th">th (兔仔 thòo-á)</option>
+                    <option value="n">n (籃仔 nâ-á)</option>
+                    <option value="l">l (蟧蜈 lâ-giâ)</option>
+                  </optgroup>
+                  <optgroup label="舌根音">
+                    <option value="k">k (雞公 ke-kang)</option>
+                    <option value="kh">kh (短褲 té-khòo)</option>
+                    <option value="ng">ng (黃金 n̂g-kim)</option>
+                    <option value="g">g (蜈蚣 giâ-kang)</option>
+                  </optgroup>
+                  <optgroup label="舌齒音">
+                    <option value="ts">ts (查埔 tsa-poo)</option>
+                    <option value="tsh">tsh (田嬰 tshân-enn)</option>
+                    <option value="s">s (時鐘 sî-tsing)</option>
+                    <option value="j">j (鰇魚 jiû-hî)</option>
+                  </optgroup>
+                  <optgroup label="喉音">
+                    <option value="h">h (葉仔 hio̍h-á)</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <!-- Final Select -->
+              <div>
+                <label for="synFinal" class="block text-xs font-black text-zinc-700 mb-1.5">2. 選擇韻母 (Final)</label>
+                <select id="synFinal" class="w-full px-3 py-2.5 bg-[#FAF7F0] mondrian-border rounded-xl font-bold text-sm focus:outline-none">
+                  <optgroup label="單元音 (6)">
+                    <option value="a">a (阿媽 a-má)</option>
+                    <option value="i" selected>i (椅仔 í-á)</option>
+                    <option value="u">u (溫泉 un-tsuânn)</option>
+                    <option value="e">e (鞋仔 ê-á)</option>
+                    <option value="oo">oo (烏鴉 oo-a)</option>
+                    <option value="o">o (蚵仔 ô-á)</option>
+                  </optgroup>
+                  <optgroup label="複元音 (10)">
+                    <option value="ai">ai (愛心 ài-sim)</option>
+                    <option value="au">au (嚨喉 nâ-âu)</option>
+                    <option value="ia">ia (野球 iá-kiû)</option>
+                    <option value="iu">iu (郵局 iû-kio̍k)</option>
+                    <option value="io">io (腰帶 io-tuà)</option>
+                    <option value="ua">ua (相倚 sio-uá)</option>
+                    <option value="ui">ui (畏寒 uì-kuânn)</option>
+                    <option value="ue">ue (鍋仔 ue-á)</option>
+                    <option value="iau">iau (腹肚枵 pak-tóo-iau)</option>
+                    <option value="uai">uai (歪哥 uai-ko)</option>
+                  </optgroup>
+                  <optgroup label="鼻化元音 (12)">
+                    <option value="ann">ann (冇炭 phànn-thuànn)</option>
+                    <option value="inn">inn (發穎 huat-ínn)</option>
+                    <option value="enn">enn (嬰仔 enn-á)</option>
+                    <option value="onn">onn (嗚嗚叫 onn-onn-kiò)</option>
+                    <option value="ainn">ainn (偝囡仔 āinn-gín-á)</option>
+                    <option value="aunn">aunn (喵叫 aunn-aunn-kiò)</option>
+                    <option value="iann">iann (影片 iánn-phìnn)</option>
+                    <option value="iunn">iunn (鴛鴦 uan-iunn)</option>
+                    <option value="uinn">uinn (關門 kuinn-mn̂g)</option>
+                    <option value="iaunn">iaunn (喓 iaunn)</option>
+                    <option value="uann">uann (火山 hué-suann)</option>
+                    <option value="uainn">uainn (關機 kuainn-ki)</option>
+                  </optgroup>
+                  <optgroup label="鼻音韻母 -m / -n / -ng (15)">
+                    <option value="am">am (喙罨 tshuì-am)</option>
+                    <option value="im">im (噪音 tshò-im)</option>
+                    <option value="om">om (掩目睭 om ba̍k-tsiu)</option>
+                    <option value="iam">iam (閹雞 iam-ke)</option>
+                    <option value="an">an (安靜 an-tsīng)</option>
+                    <option value="in">in (姻緣 in-iân)</option>
+                    <option value="un">un (感恩 kám-un)</option>
+                    <option value="ian">ian (煙火 ian-hué)</option>
+                    <option value="uan">uan (手腕 tshiú-uán)</option>
+                    <option value="ang">ang (尪仔 ang-á)</option>
+                    <option value="ing">ing (英語 ing-gí)</option>
+                    <option value="ong">ong (風吹 hong-tshue)</option>
+                    <option value="iang">iang (勍仔 khiang-á)</option>
+                    <option value="iong">iong (國中 kok-tiong)</option>
+                    <option value="uang">uang (規嚾規黨 kui-uang-kui-tóng)</option>
+                  </optgroup>
+                  <optgroup label="入聲韻母 -h / -p / -t / -k (27)">
+                    <option value="ah">ah (鴨母 ah-bó)</option>
+                    <option value="ih">ih (覕相揣 bih-sio-tshuē)</option>
+                    <option value="uh">uh (欶管 suh-kóng)</option>
+                    <option value="eh">eh (阿伯 a-peh)</option>
+                    <option value="oh">oh (索仔 soh-á)</option>
+                    <option value="auh">auh (𩛩扁 kauh-pínn)</option>
+                    <option value="iah">iah (船隻 tsûn-tsiah)</option>
+                    <option value="iuh">iuh (搐筋 tiuh-kin)</option>
+                    <option value="ioh">ioh (借錢 tsioh-tsînn)</option>
+                    <option value="uah">uah (海獺 hái-thuah)</option>
+                    <option value="uih">uih (輸血 su-huih)</option>
+                    <option value="ueh">ueh (血筋 hueh-kin)</option>
+                    <option value="iauh">iauh (藃藃 hiauh-hiauh)</option>
+                    <option value="ap">ap (田蛤仔 tshân-kap-á)</option>
+                    <option value="ip">ip (翕相機 hip-siòng-ki)</option>
+                    <option value="op">op (欱蝶仔 hop ia̍h-á)</option>
+                    <option value="iap">iap (紅帖仔 âng-thiap-á)</option>
+                    <option value="at">at (遏手把 at-tshiú-pà)</option>
+                    <option value="it">it (鉛筆 iân-pit)</option>
+                    <option value="ut">ut (跤骨 kha-kut)</option>
+                    <option value="iat">iat (桔仔 kiat-á)</option>
+                    <option value="uat">uat (法官 huat-kuann)</option>
+                    <option value="ak">ak (沃水 ak-tsuí)</option>
+                    <option value="ik">ik (竹筍 tik-sún)</option>
+                    <option value="ok">ok (基督教 ki-tok-kàu)</option>
+                    <option value="iak">iak (摔倒 siak--tó)</option>
+                    <option value="iok">iok (麻雀 mâ-tshiok)</option>
+                  </optgroup>
+                  <optgroup label="聲化韻母 (2)">
+                    <option value="m">m (毋通 m̄-thang)</option>
+                    <option value="ng">ng (徛黃 khiā-n̂g)</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <!-- Tone Select -->
+              <div>
+                <label for="synTone" class="block text-xs font-black text-zinc-700 mb-1.5">3. 選擇聲調 (Tone)</label>
+                <select id="synTone" class="w-full px-3 py-2.5 bg-[#FAF7F0] mondrian-border rounded-xl font-bold text-sm focus:outline-none">
+                  <option value="1">第1調 (陰平・高平 44)</option>
+                  <option value="2">第2調 (陰上・高降 53)</option>
+                  <option value="3">第3調 (陰去・低降 21)</option>
+                  <option value="4">第4調 (陰入・中促 32)</option>
+                  <option value="5">第5調 (陽平・低升 24)</option>
+                  <option value="7">第7調 (陽去・中平 33)</option>
+                  <option value="8">第8調 (陽入・高促 4)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom Input Box -->
+            <div class="pt-2">
+              <label for="customTailoInput" class="block text-xs font-black text-zinc-700 mb-1.5">或直接輸入台羅拼音（支援數字調號如 <code class="bg-zinc-200 px-1 rounded">tshiunn7</code>、<code class="bg-zinc-200 px-1 rounded">pi1-a2</code> 或帶調符台羅字）：</label>
+              <div class="flex gap-2">
+                <input id="customTailoInput" type="text" placeholder="例如：pi1-a2、tshiunn7、suainn7-a2、pak4-too2-iau1" class="flex-1 px-3.5 py-2 bg-[#FAF7F0] mondrian-border rounded-xl text-sm font-bold focus:outline-none" />
+                <button id="btnParseCustom" type="button" class="mondrian-btn bg-zinc-900 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shrink-0">
+                  解析並發音
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Preset Pills -->
+            <div class="flex flex-wrap items-center gap-2 pt-1">
+              <span class="text-xs font-bold text-zinc-500">快速試聽範例：</span>
+              <button type="button" onclick="loadQuickPreset('s', 'ai', 1, '獅 sai', '9721')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">1. 獅 sai</button>
+              <button type="button" onclick="loadQuickPreset('h', 'oo', 2, '虎 hóo', '21895')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">2. 虎 hóo</button>
+              <button type="button" onclick="loadQuickPreset('p', 'a', 3, '豹 pà', '6669')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">3. 豹 pà</button>
+              <button type="button" onclick="loadQuickPreset('p', 'ih', 4, '鱉 pih', '')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">4. 鱉 pih</button>
+              <button type="button" onclick="loadQuickPreset('k', 'au', 5, '猴 kâu', '8571')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">5. 猴 kâu</button>
+              <button type="button" onclick="loadQuickPreset('tsh', 'iunn', 7, '象 tshiūnn', '16174')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">7. 象 tshiūnn</button>
+              <button type="button" onclick="loadQuickPreset('l', 'ok', 8, '鹿 lo̍k', '8094')" class="text-xs font-bold px-2.5 py-1 bg-zinc-100 hover:bg-[#F2C12E] mondrian-border rounded-lg">8. 鹿 lo̍k</button>
+            </div>
+          </div>
+
+          <!-- Output Result & Pitch Visualizer (Col 5) -->
+          <div class="lg:col-span-5 bg-[#FAF7F0] mondrian-border rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-zinc-500 uppercase">拼讀結果與聲調曲線</span>
+                <span id="synToneRuleTag" class="text-xs font-bold px-2 py-0.5 bg-[#F2C12E] rounded mondrian-border">第1調 (高平 44)</span>
+              </div>
+
+              <div class="my-4 text-center py-4 bg-white mondrian-border rounded-xl relative">
+                <div id="synOutputTailo" class="text-4xl sm:text-5xl font-black text-zinc-900 tracking-wide">ti</div>
+                <div id="synOutputNote" class="text-xs font-bold text-[#D9381E] mt-2">聲母 t (舌尖不送氣) + 韻母 i (高前展唇元音)</div>
+              </div>
+
+              <!-- SVG Pitch Contour Visualizer -->
+              <div class="bg-white mondrian-border rounded-xl p-3 mb-4">
+                <div class="text-[11px] font-bold text-zinc-500 mb-1 flex justify-between">
+                  <span>五度制音高曲線 (Pitch Contour)</span>
+                  <span id="synSandhiHint" class="text-[#1B4D89]">連讀變調：第1調 → 第7調</span>
+                </div>
+                <svg id="synPitchSvg" viewBox="0 0 260 70" class="w-full h-16">
+                  <line x1="20" y1="12" x2="240" y2="12" stroke="#E4E4E7" stroke-width="1" stroke-dasharray="3 3" />
+                  <line x1="20" y1="27" x2="240" y2="27" stroke="#E4E4E7" stroke-width="1" stroke-dasharray="3 3" />
+                  <line x1="20" y1="42" x2="240" y2="42" stroke="#E4E4E7" stroke-width="1" stroke-dasharray="3 3" />
+                  <line x1="20" y1="57" x2="240" y2="57" stroke="#E4E4E7" stroke-width="1" stroke-dasharray="3 3" />
+                  <text x="6" y="16" font-size="9" fill="#71717A" font-weight="bold">5</text>
+                  <text x="6" y="31" font-size="9" fill="#71717A" font-weight="bold">4</text>
+                  <text x="6" y="46" font-size="9" fill="#71717A" font-weight="bold">3</text>
+                  <text x="6" y="61" font-size="9" fill="#71717A" font-weight="bold">1</text>
+                  <path id="synPitchPath" d="M 35 27 L 225 27" fill="none" stroke="#D9381E" stroke-width="5" stroke-linecap="round" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2.5">
+              <button id="btnPlaySynthesizer" type="button" class="flex-1 mondrian-btn bg-[#D9381E] text-white font-black text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+                <span>🔊 立即發音 (本調)</span>
+              </button>
+              <button id="btnPlaySandhiSynthesizer" type="button" class="mondrian-btn bg-[#1B4D89] text-white font-bold text-xs sm:text-sm py-3 px-3.5 rounded-xl flex items-center justify-center gap-1.5" title="播放變調後的音高">
+                <span>🔄 聽變調音</span>
+              </button>
+              <a id="linkMoeDictSearch" href="https://sutian.moe.edu.tw/zh-hant/tshiau/?lui=tai_su&tsha=ti1" target="_blank" rel="noopener noreferrer" class="mondrian-btn bg-[#F2C12E] text-zinc-900 font-bold text-xs sm:text-sm py-3 px-3.5 rounded-xl flex items-center justify-center gap-1" title="在教育部辭典查詢此音讀">
+                <span>📖 查教典 ↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: INITIALS (18 聲母展廳) ==================== -->
+    <section id="tab-initials" style="display: none;" class="space-y-6">
+      <div class="bg-white mondrian-card rounded-2xl p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#1B4D89] text-white text-xs font-black rounded mondrian-border">
+              二、聲母（17个聲母 + 1个零聲母）
+            </div>
+            <h2 class="text-2xl font-black mt-2">🗣️ 台語聲母六大發音部位互動展廳</h2>
+            <p class="text-xs sm:text-sm text-zinc-600 mt-1">
+              點擊任一聲母卡片可聽<strong>教育部辭典真人發音與單音示範</strong>，點擊「🔍 詳情」可展開雙欄燈箱查看原調／變調拆解與例句。官方音檔參考：<a href="https://tailo.moe.edu.tw/sam1.html" target="_blank" rel="noopener noreferrer" class="underline font-bold text-[#1B4D89]">教育部臺灣台語羅馬字拼音教學網 ↗</a>
+            </p>
+          </div>
+          <!-- Category Filter Buttons -->
+          <div class="flex flex-wrap gap-2" id="initialFilterGroup">
+            <button type="button" data-init-filter="all" class="init-filter-btn filter-active mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">全部 (24例)</button>
+            <button type="button" data-init-filter="合唇音" class="init-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">1. 合唇音 (p, ph, m, b)</button>
+            <button type="button" data-init-filter="舌尖音" class="init-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">2. 舌尖音 (t, th, n, l)</button>
+            <button type="button" data-init-filter="舌根音" class="init-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">3. 舌根音 (k, kh, ng, g)</button>
+            <button type="button" data-init-filter="舌齒音" class="init-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">4. 舌齒音 (ts, tsh, s, j)</button>
+            <button type="button" data-init-filter="零聲母与喉音" class="init-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">5-6. 零聲母 & 喉音 (h)</button>
+          </div>
+        </div>
+
+        <!-- Category Description Banner -->
+        <div id="initialCategoryDesc" class="mt-4 p-4 bg-[#FAF7F0] mondrian-border rounded-xl text-xs sm:text-sm font-medium text-zinc-800">
+          💡 <strong>發音要領總覽：</strong>台語聲母共有17個輔音聲母加上1個零聲母（無預備輔音的音節）。其中 <strong>b, l, g, j</strong> 為濁音，<strong>m, n, ng</strong> 為鼻音（氣流從鼻腔流出）。
+        </div>
+      </div>
+
+      <!-- Initials Card Grid -->
+      <div id="initialsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </section>
+
+    <!-- ==================== TAB 3: FINALS (72 韻母展廳) ==================== -->
+    <section id="tab-finals" style="display: none;" class="space-y-6">
+      <div class="bg-white mondrian-card rounded-2xl p-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#D9381E] text-white text-xs font-black rounded mondrian-border">
+              三、韻母（總共 72 个韻母，掌握規則免死背！）
+            </div>
+            <h2 class="text-2xl font-black mt-2">🎵 台語韻母五大系統互動展廳</h2>
+            <p class="text-xs sm:text-sm text-zinc-600 mt-1">
+              分為 <strong>1. 元音韻母（單元音6 + 複元音10）</strong>、<strong>2. 鼻化元音 (+nn 共12個)</strong>、<strong>3. 鼻音韻母 (-m/-n/-ng 共15個)</strong>、<strong>4. 入聲韻母 (-h/-p/-t/-k 共27個)</strong>、<strong>5. 聲化韻母 (m, ng 共2個)</strong>。官方音檔參考：<a href="https://tailo.moe.edu.tw/ium1.html" target="_blank" rel="noopener noreferrer" class="underline font-bold text-[#D9381E]">教育部韻母學習網 ↗</a>
+            </p>
+          </div>
+
+          <!-- Search & Filter -->
+          <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <input id="finalSearchInput" type="text" placeholder="搜尋韻母、漢字或台羅 (如 iunn, 鴛鴦, ah)..." class="px-3.5 py-2 bg-[#FAF7F0] mondrian-border rounded-xl text-xs sm:text-sm font-bold flex-1 sm:w-64 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Sub-category Filter Pills -->
+        <div class="flex flex-wrap gap-2 mt-4" id="finalFilterGroup">
+          <button type="button" data-final-filter="all" class="final-filter-btn filter-active mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">全部韻母 (72)</button>
+          <button type="button" data-final-filter="單元音" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">1A. 單元音 (6)</button>
+          <button type="button" data-final-filter="複元音" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">1B. 複元音 (10)</button>
+          <button type="button" data-final-filter="鼻化元音" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">2. 鼻化元音 -nn (12)</button>
+          <button type="button" data-final-filter="鼻音m" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">3A. 鼻音 -m (4)</button>
+          <button type="button" data-final-filter="鼻音n" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">3B. 鼻音 -n (5)</button>
+          <button type="button" data-final-filter="鼻音ng" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">3C. 鼻音 -ng (6)</button>
+          <button type="button" data-final-filter="入聲h" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">4A. 入聲 -h (13)</button>
+          <button type="button" data-final-filter="入聲p" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">4B. 入聲 -p (4)</button>
+          <button type="button" data-final-filter="入聲t" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">4C. 入聲 -t (5)</button>
+          <button type="button" data-final-filter="入聲k" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">4D. 入聲 -k (5)</button>
+          <button type="button" data-final-filter="聲化韻母" class="final-filter-btn mondrian-btn bg-white text-zinc-900 text-xs font-bold px-3 py-1.5 rounded-lg">5. 聲化韻母 m/ng (2)</button>
+        </div>
+
+        <div id="finalCategoryDesc" class="mt-4 p-4 bg-[#FAF7F0] mondrian-border rounded-xl text-xs sm:text-sm font-medium text-zinc-800">
+          💡 <strong>韻母記憶秘訣：</strong>以 6 個單元音 (a, i, u, e, oo, o) 與 10 個複元音為基底，加上鼻化符號 <strong>-nn</strong>、鼻音韻尾 <strong>-m / -n / -ng</strong>，或急促收束的入聲韻尾 <strong>-h / -p / -t / -k</strong>，就能自然推導出全部 72 個韻母！
+        </div>
+      </div>
+
+      <!-- Finals Grid -->
+      <div id="finalsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </section>
+
+    <!-- ==================== TAB 4: TONES & SANDHI (八聲七調與變調規則) ==================== -->
+    <section id="tab-tones" style="display: none;" class="space-y-8">
+      <!-- Section 4-1: 8 Tones Overview -->
+      <div class="bg-white mondrian-card rounded-2xl p-6 sm:p-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-[#F2C12E] text-zinc-900 text-xs font-black rounded mondrian-border">
+          四、聲調（八聲七調：獅、虎、豹、鱉、猴、狗、象、鹿）
+        </div>
+        <h2 class="text-2xl font-black mt-2">📈 台語八聲七調音高曲線與口訣互動區</h2>
+        <p class="text-xs sm:text-sm text-zinc-600 mt-1">
+          總共有 8 個聲調，不過因為<strong>第 2 聲與第 6 聲同款發音（高降調）</strong>，合併後只標示 7 個聲調，通稱「<strong>8聲7調</strong>」。點擊下方八聲代表字卡片可聽教育部標準發音與合成聲調！
+        </p>
+
+        <!-- 8 Tones Cards Grid -->
+        <div id="tonesMnemonicGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mt-6"></div>
+
+        <!-- Key Classroom Rules Banner from Slides 4 & 119 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <div class="bg-[#D9381E]/10 mondrian-border rounded-xl p-4 flex items-start gap-3">
+            <div class="w-10 h-10 bg-[#D9381E] text-white font-black rounded-lg mondrian-border flex items-center justify-center shrink-0 text-lg">讀</div>
+            <div>
+              <h4 class="font-black text-sm sm:text-base text-zinc-900">【規則一】看著第二聲，愛唸第一聲（連讀前字）</h4>
+              <p class="text-xs text-zinc-700 mt-1 leading-relaxed">
+                在雙字詞或多字詞連讀時，前字若標示<strong>第 2 聲（á 高降調）</strong>，變調後會變成<strong>第 1 聲（a 高平調）</strong>！例如：<code class="font-bold">等路 tán-lōo (2-7 → 1-7)</code>、<code class="font-bold">買賣 bé-bē (2-7 → 1-7)</code>。
+              </p>
+            </div>
+          </div>
+          <div class="bg-[#1B4D89]/10 mondrian-border rounded-xl p-4 flex items-start gap-3">
+            <div class="w-10 h-10 bg-[#1B4D89] text-white font-black rounded-lg mondrian-border flex items-center justify-center shrink-0 text-lg">寫</div>
+            <div>
+              <h4 class="font-black text-sm sm:text-base text-zinc-900">【規則二】聽著第一聲，愛寫第二聲（聽寫還原）</h4>
+              <p class="text-xs text-zinc-700 mt-1 leading-relaxed">
+                聽寫連讀詞彙時，若聽到前字唸高平調（第 1 聲的音高），要逆推回本調寫作<strong>第 2 聲（á）</strong>（或 -h 入聲第 4 調）。例如聽到 <code class="font-bold">i-á</code> 高平起音，本調應寫作 <code class="font-bold">椅仔 í-á (2-2 → 1-2)</code>！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4-2: Interactive Tone Sandhi Circle & Calculator -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Tone Sandhi Interactive Diagram (Col 7) -->
+        <div class="lg:col-span-7 bg-white mondrian-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-xs font-black px-2 py-0.5 bg-zinc-900 text-white rounded">變調規則表 (Slide 5)</span>
+              <h3 class="text-xl font-black mt-1">🔄 一般連讀變調循環圖（點擊聲調節點看範例）</h3>
+            </div>
+            <span class="text-xs font-bold bg-[#F2C12E] px-2.5 py-1 rounded mondrian-border">口訣：5 → 7 → 3 → 2 → 1 → 7</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5" id="sandhiRuleNodes"></div>
+
+          <!-- Selected Sandhi Rule Detail Box -->
+          <div id="sandhiDetailBox" class="bg-[#FAF7F0] mondrian-border rounded-xl p-4"></div>
+        </div>
+
+        <!-- Special 仔 (á) Before Sandhi Accordion & Interactive Tester (Col 5) -->
+        <div class="lg:col-span-5 bg-white mondrian-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+          <div>
+            <span class="text-xs font-black px-2 py-0.5 bg-[#D9381E] text-white rounded">特殊變調規則 (Slide 6)</span>
+            <h3 class="text-xl font-black mt-1">✨ 台語的「仔 (á) 前變調」</h3>
+            <p class="text-xs text-zinc-600 mt-1 leading-relaxed">
+              接在「仔 (á)」前面的字，變調後<strong>只有「第 1 調」和「第 7 調」兩種結果</strong>！原變調抬高的變成 <strong>1</strong>；原變調降低或中平的變成 <strong>7</strong>。
+            </p>
+
+            <!-- Accordions for 仔前變調 -->
+            <div class="mt-4 space-y-3">
+              <!-- Rule Group A: 2, 3, 4 => 1 -->
+              <div class="mondrian-border rounded-xl overflow-hidden bg-[#FAF7F0]">
+                <button type="button" onclick="toggleAccordion('acc-a1')" class="w-full px-4 py-3 bg-[#F2C12E] text-zinc-900 font-black text-sm flex items-center justify-between">
+                  <span>🔼 原調 2, 3, 4 接「仔」 ➔ 變第 1 調</span>
+                  <span id="icon-acc-a1">▼</span>
+                </button>
+                <div id="acc-a1" style="display: block;" class="p-3.5 space-y-2 text-xs">
+                  <div class="font-bold text-zinc-700">● 2 → 1：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList2"></div>
+                  <div class="font-bold text-zinc-700 pt-1">● 3 → 1：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList3"></div>
+                  <div class="font-bold text-zinc-700 pt-1">● 4 (p,t,k,h) → 1：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList4"></div>
+                </div>
+              </div>
+
+              <!-- Rule Group B: 1, 5, 7, 8 => 7 -->
+              <div class="mondrian-border rounded-xl overflow-hidden bg-[#FAF7F0]">
+                <button type="button" onclick="toggleAccordion('acc-a7')" class="w-full px-4 py-3 bg-[#1B4D89] text-white font-black text-sm flex items-center justify-between">
+                  <span>🔽 原調 1, 5, 7, 8 接「仔」 ➔ 變第 7 調</span>
+                  <span id="icon-acc-a7">▼</span>
+                </button>
+                <div id="acc-a7" style="display: block;" class="p-3.5 space-y-2 text-xs">
+                  <div class="font-bold text-zinc-700">● 1 → 7：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList1"></div>
+                  <div class="font-bold text-zinc-700 pt-1">● 5 → 7：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList5"></div>
+                  <div class="font-bold text-zinc-700 pt-1">● 7 → 7（維持中平）：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList7"></div>
+                  <div class="font-bold text-zinc-700 pt-1">● 8 (p,t,k,h) → 7：</div>
+                  <div class="flex flex-wrap gap-1.5" id="aBeforeList8"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-zinc-900 text-white rounded-xl text-xs">
+            <div class="font-black text-[#F2C12E] mb-1">📌 為什麼 4(p,t,k) 在「仔」前會變成 1？</div>
+            <p class="text-zinc-300 leading-relaxed">
+              例如「竹仔 tik-á (4-2 → 1-2)」、「桌仔 toh-á (4-2 → 1-2)」，在「仔」前不論 -h 或 -p/-t/-k 入聲第4調，口語連讀時常弱化上升為高平第1調！
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: QUIZ (聽音辨調與變調挑戰) ==================== -->
+    <section id="tab-quiz" style="display: none;" class="space-y-6">
+      <div class="bg-white mondrian-card rounded-2xl p-6 sm:p-8">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-5 border-b-2 border-zinc-900">
+          <div>
+            <span class="text-xs font-black px-2.5 py-1 bg-[#D9381E] text-white rounded mondrian-border">INTERACTIVE QUIZ</span>
+            <h2 class="text-2xl font-black mt-2">🎯 台羅拼音聽音辨詞與變調實戰測驗</h2>
+            <p class="text-xs sm:text-sm text-zinc-600 mt-1">結合簡報 90+ 例詞與變調規則，測試你對「聲母、韻母、原調與變調」的掌握度！</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="px-4 py-2 bg-[#F2C12E] mondrian-border rounded-xl text-center">
+              <div class="text-[10px] font-black uppercase">目前得分</div>
+              <div id="quizScoreText" class="text-xl font-black">0 / 0</div>
+            </div>
+            <button id="btnNewQuiz" type="button" class="mondrian-btn bg-zinc-900 text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-xl">
+              🔄 換一題
+            </button>
+          </div>
+        </div>
+
+        <!-- Quiz Question Area -->
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-5 bg-[#FAF7F0] mondrian-border rounded-2xl p-6 text-center space-y-4">
+            <span id="quizCategoryBadge" class="inline-block text-xs font-black px-3 py-1 bg-[#1B4D89] text-white rounded">聲母與韻母聽辨</span>
+            <div id="quizQuestionPrompt" class="text-lg font-black text-zinc-900">請點擊下方按鈕聆聽發音，選出正確的台羅拼音與變調：</div>
+            <div id="quizHanziHint" class="text-3xl font-black text-[#D9381E]">觱仔</div>
+            <div id="quizSentenceHint" class="text-xs text-zinc-600">例句：火車過了，才歕觱仔。</div>
+            <div class="flex justify-center gap-3 pt-2">
+              <button id="btnQuizPlayAudio" type="button" class="mondrian-btn bg-[#D9381E] text-white font-black text-sm px-5 py-3 rounded-xl flex items-center gap-2">
+                <span>🔊 播放詞目發音</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 space-y-3">
+            <div id="quizOptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+            <div id="quizFeedbackBox" style="display: none;" class="p-4 mondrian-border rounded-xl text-xs sm:text-sm font-bold"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== LIGHTBOX MODAL (雙欄展示：左圖右文 + 發音與辭典直連) ==================== -->
+  <div id="lightboxModal" style="display: none;" class="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4 overflow-y-auto">
+    <div id="lightboxBackdrop" class="fixed inset-0"></div>
+    <div class="relative z-10 bg-white mondrian-card rounded-2xl max-w-3xl w-full overflow-hidden my-8">
+      <!-- Modal Top Bar -->
+      <div class="bg-zinc-900 text-white px-5 py-3.5 flex items-center justify-between border-b-2 border-zinc-900">
+        <div class="flex items-center gap-2">
+          <span id="lbCategoryBadge" class="text-xs font-black px-2.5 py-0.5 bg-[#F2C12E] text-zinc-900 rounded">合唇音</span>
+          <h3 id="lbTitle" class="text-base sm:text-lg font-black">p — 觱仔 (pi-á)</h3>
+        </div>
+        <button id="btnCloseLightbox" type="button" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-[#D9381E] text-white font-black flex items-center justify-center">
+          ✕
+        </button>
+      </div>
+
+      <!-- Two-Column Body -->
+      <div class="grid grid-cols-1 md:grid-cols-12">
+        <!-- Left Column: Visual Card & Phoneme Highlight (Col 5) -->
+        <div class="md:col-span-5 bg-[#FAF7F0] p-6 flex flex-col items-center justify-center border-b-2 md:border-b-0 md:border-r-2 border-zinc-900 text-center">
+          <div id="lbSymbolBox" class="text-6xl font-black text-[#D9381E] tracking-tight">p</div>
+          <div id="lbWordTailo" class="text-2xl font-black text-zinc-900 mt-2">pi-á</div>
+          <div id="lbWordHanzi" class="text-xl font-bold text-zinc-700 mt-1">觱仔</div>
+          <div id="lbEmojiGraphic" class="mt-4 w-24 h-24 rounded-2xl bg-white mondrian-border flex items-center justify-center text-5xl">
+            📢
+          </div>
+          <div class="mt-4 flex flex-wrap justify-center gap-2 w-full">
+            <button id="lbBtnPlayWord" type="button" class="w-full mondrian-btn bg-[#D9381E] text-white font-black text-xs sm:text-sm py-2.5 px-4 rounded-xl">
+              🔊 播放詞目發音 (MOE/合成)
+            </button>
+            <button id="lbBtnPlayPhoneme" type="button" class="w-full mondrian-btn bg-[#1B4D89] text-white font-bold text-xs py-2 px-3 rounded-xl">
+              🎵 聽單純音標示範音
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Detailed Explanation, Tone Sandhi & MOE Links (Col 7) -->
+        <div class="md:col-span-7 p-6 space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div>
+              <div class="text-xs font-black text-zinc-500 uppercase">發音部位與方法</div>
+              <p id="lbArticulationDesc" class="text-sm font-medium text-zinc-800 mt-1 leading-relaxed"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-[#FAF7F0] mondrian-border rounded-xl">
+                <div class="text-[11px] font-bold text-zinc-500">原調 (本調)</div>
+                <div id="lbOrigTone" class="text-lg font-black text-zinc-900 mt-0.5">1-2</div>
+              </div>
+              <div class="p-3 bg-[#F2C12E]/25 mondrian-border rounded-xl">
+                <div class="text-[11px] font-bold text-amber-900">連讀變調後</div>
+                <div id="lbSandhiTone" class="text-lg font-black text-[#D9381E] mt-0.5">7-2</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-[#FAF7F0] mondrian-border rounded-xl space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-black text-[#1B4D89]">📖 簡報例句與語境</span>
+                <button id="lbBtnPlaySentence" type="button" class="text-xs font-black text-[#D9381E] hover:underline">🔊 朗讀例句</button>
+              </div>
+              <p id="lbSentenceHanzi" class="text-base font-black text-zinc-900"></p>
+              <p id="lbSentenceNote" class="text-xs text-zinc-600"></p>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-2">
+            <a id="lbMoeDirectLink" href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="mondrian-btn bg-[#F2C12E] text-zinc-900 font-black text-xs px-3.5 py-2 rounded-lg inline-flex items-center gap-1">
+              🔗 教育部辭典詞條頁 ↗
+            </a>
+            <a id="lbTailoRefLink" href="https://tailo.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-zinc-600 hover:text-zinc-900 underline">
+              教育部台羅拼音教學網 ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GOOGLE DRIVE CORS & SOURCE INFO MODAL ==================== -->
+  <div id="gdriveModal" style="display: none;" class="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4">
+    <div id="gdriveBackdrop" class="fixed inset-0"></div>
+    <div class="relative z-10 bg-white mondrian-card rounded-2xl max-w-xl w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b-2 border-zinc-900 pb-3">
+        <h3 class="text-lg font-black">🗂️ 教材來源與 Google Drive 圖床直連修復工具</h3>
+        <button id="btnCloseGDriveModal" type="button" class="w-8 h-8 rounded-lg bg-zinc-900 text-white font-black">✕</button>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-zinc-700 leading-relaxed">
+        <p>
+          本系統完整轉化自您上傳的<strong>《Sam-台羅拼音系統簡報.pptx》（共120頁投影片）</strong>，並串聯：
+        </p>
+        <ul class="list-disc pl-5 space-y-1 font-medium">
+          <li><a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="text-[#1B4D89] underline font-bold">教育部臺灣台語常用詞辭典 (sutian.moe.edu.tw)</a>：詞條頁面與官方真人發音音檔映射。</li>
+          <li><a href="https://tailo.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="text-[#D9381E] underline font-bold">教育部臺灣台語羅馬字拼音教學網 (tailo.moe.edu.tw)</a>：聲母、韻母與聲調教學規範。</li>
+          <li><strong>Web Audio API 聲學合成引擎</strong>：當處於離線環境或跨網域限制時，自動以五度制基頻曲線（F0）與共振峰濾波器即時合成台語 8 聲 7 調與入聲急停音！</li>
+        </ul>
+        <div class="p-3.5 bg-[#FAF7F0] mondrian-border rounded-xl space-y-2">
+          <label for="gdriveInputUrl" class="block font-black text-xs text-zinc-900">🔧 Google Drive 圖片分享連結自動轉直連測試（支援自訂圖卡）：</label>
+          <div class="flex gap-2">
+            <input id="gdriveInputUrl" type="text" placeholder="貼上 https://drive.google.com/file/d/FILE_ID/view..." class="flex-1 px-3 py-1.5 bg-white mondrian-border rounded-lg text-xs font-bold" />
+            <button id="btnConvertGDrive" type="button" class="mondrian-btn bg-[#1B4D89] text-white text-xs font-bold px-3 py-1.5 rounded-lg">轉換直連</button>
+          </div>
+          <div id="gdriveOutputResult" class="text-xs font-mono text-emerald-700 break-all"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-zinc-900 text-zinc-300 border-t-4 border-zinc-900 mt-12 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div>
+        <span class="font-black text-white">Tâi-lô 台羅拼音互動式教學與發音系統</span> ・ 依據《Sam-台羅拼音系統簡報》與教育部臺灣台語常用詞辭典建置
+      </div>
+      <div class="flex flex-wrap gap-4">
+        <a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener noreferrer" class="hover:text-[#F2C12E] underline">教育部臺灣台語常用詞辭典</a>
+        <a href="https://tailo.moe.edu.tw/sam1.html" target="_blank" rel="noopener noreferrer" class="hover:text-[#F2C12E] underline">聲母教學網</a>
+        <a href="https://tailo.moe.edu.tw/ium1.html" target="_blank" rel="noopener noreferrer" class="hover:text-[#F2C12E] underline">韻母教學網</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT LOGIC & DATA ==================== -->
+  <script>
+    // 1. Google Drive URL Auto-Fixer (CORS-safe direct image preview)
+    function fixGoogleDriveImageUrl(url) {
+      if (!url) return '';
+      const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+      if (match && match[1]) {
+        return 'https://lh3.googleusercontent.com/d/' + match[1];
+      }
+      return url;
+    }
+
+    // 2. Complete Dataset from "Sam-台羅拼音系統簡報.pptx" (120 slides) + MOE Dictionary IDs
+    const INITIALS_DATA = [
+      // 合唇音 (p, ph, m, b)
+      { id: 'init-p', symbol: 'p', category: '合唇音', catDesc: '雙唇合起來，共氣流擋咧，才閣共雙唇褫開發出聲音（清不送氣雙唇塞音 [p]）。', wordTailo: 'pi-á', wordHanzi: '觱仔', origTone: '1-2', sandhiTone: '7-2', sentence: '火車過了，才歕觱仔。', note: '哨子。比喻事情過了才做於事無補的措施。', moeId: '11914', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '📢' },
+      { id: 'init-ph', symbol: 'ph', category: '合唇音', catDesc: '雙唇合起來擋氣流，張開時強烈送氣發出聲音（清送氣雙唇塞音 [pʰ]）。', wordTailo: 'phōo-á', wordHanzi: '簿仔', origTone: '7-2', sandhiTone: '7-2', sentence: '兩本簿仔', note: '記錄事物的本子、作業簿（仔前變調 7→7）。', moeId: '12819', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '📓' },
+      { id: 'init-m', symbol: 'm', category: '合唇音', catDesc: '佇咧合唇的時陣，聲帶振動，氣流改對鼻空（鼻孔）洩出來（雙唇鼻音 [m]）。', wordTailo: 'môo-pit', wordHanzi: '毛筆', origTone: '5-4', sandhiTone: '7-4', sentence: '我會曉寫毛筆。', note: '文房四寶之一，用獸毛製成的筆。', moeId: '26043', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🖌️' },
+      { id: 'init-b', symbol: 'b', category: '合唇音', catDesc: '雙唇合起來，聲帶振動發出濁音（濁雙唇塞音 [b]）。', wordTailo: 'bō-á', wordHanzi: '帽仔', origTone: '7-2', sandhiTone: '7-2', sentence: '我有一頂帽仔', note: '帽子（仔前變調 7→7）。', moeId: '8327', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '👒' },
+
+      // 舌尖音 (t, th, n, l)
+      { id: 'init-t', symbol: 't', category: '舌尖音', catDesc: '共舌尖囥佇頭前頂、下排喙齒交界的所在，共氣流擋咧，才閣共聲音放出來（清不送氣舌尖塞音 [t]）。', wordTailo: 'ti-á', wordHanzi: '豬仔', origTone: '1-2', sandhiTone: '7-2', sentence: '彼隻豬仔看起來誠古錐。', note: '小豬或豬的統稱（仔前變調 1→7）。', moeId: '11404', refUrl: 'https://tailo.moe.edu.tw/sam2.html', emoji: '🐷' },
+      { id: 'init-th', symbol: 'th', category: '舌尖音', catDesc: '舌尖抵住上齒齦阻擋氣流後送氣釋放（清送氣舌尖塞音 [tʰ]）。', wordTailo: 'thòo-á', wordHanzi: '兔仔', origTone: '3-2', sandhiTone: '1-2', sentence: '兔仔愛食草', note: '兔子（仔前特殊變調：3→1）。', moeId: '3619', refUrl: 'https://tailo.moe.edu.tw/sam2.html', emoji: '🐰' },
+      { id: 'init-n', symbol: 'n', category: '舌尖音', catDesc: '舌尖抵住上齒齦，聲帶振動，氣流從鼻腔流出（舌尖鼻音 [n]）。', wordTailo: 'nâ-á', wordHanzi: '籃仔', origTone: '5-2', sandhiTone: '7-2', sentence: '這个籃仔內底貯啥？', note: '籃子（仔前變調：5→7）。', moeId: '12990', refUrl: 'https://tailo.moe.edu.tw/sam2.html', emoji: '🧺' },
+      { id: 'init-l', symbol: 'l', category: '舌尖音', catDesc: '舌尖輕彈上齒齦，聲帶振動（濁舌尖邊音／彈音 [l/ɾ]）。', wordTailo: 'lâ-giâ', wordHanzi: '蟧蜈', origTone: '5-5', sandhiTone: '7-5', sentence: '蟧蜈生甲足驚人的！', note: '長腳蜘蛛（高腳蛛）。', moeId: '12607', refUrl: 'https://tailo.moe.edu.tw/sam2.html', emoji: '🕷️' },
+
+      // 舌根音 (k, kh, ng, g)
+      { id: 'init-k', symbol: 'k', category: '舌根音', catDesc: '舌根共氣流窒咧（塞住），才閣共聲音發出來（清不送氣舌根塞音 [k]）。', wordTailo: 'ke-kang', wordHanzi: '雞公', origTone: '1-1', sandhiTone: '7-1', sentence: '閹過的雞公飼較會大', note: '公雞（原調 1-1，連讀變調 7-1）。', moeId: '12661', refUrl: 'https://tailo.moe.edu.tw/sam3.html', emoji: '🐓' },
+      { id: 'init-kh', symbol: 'kh', category: '舌根音', catDesc: '舌根塞住氣流後強烈送氣釋放（清送氣舌根塞音 [kʰ]）。', wordTailo: 'té-khòo', wordHanzi: '短褲', origTone: '2-3', sandhiTone: '1-3', sentence: '穿短褲會予虻仔咬。', note: '長度不超過膝蓋的褲子（2→1變調）。', moeId: '8811', refUrl: 'https://tailo.moe.edu.tw/sam3.html', emoji: '🩳' },
+      { id: 'init-ng', symbol: 'ng', category: '舌根音', catDesc: 'ng音發音的時陣，舌根抵軟顎，氣流對鼻空（鼻孔）洩出來（舌根鼻音 [ŋ]）。', wordTailo: 'n̂g-kim', wordHanzi: '黃金', origTone: '5-1', sandhiTone: '7-1', sentence: '阮母仔的黃金藏佗位', note: '金子、黃金（5→7變調）。', moeId: '9247', refUrl: 'https://tailo.moe.edu.tw/sam3.html', emoji: '🪙' },
+      { id: 'init-g', symbol: 'g', category: '舌根音', catDesc: '舌根抬起阻擋氣流，聲帶振動發出濁音（濁舌根塞音 [g]）。', wordTailo: 'giâ-kang', wordHanzi: '蜈蚣', origTone: '5-1', sandhiTone: '7-1', sentence: '蜈蚣、蛤仔、蛇，三不服。', note: '節肢動物蜈蚣（5→7變調）。', moeId: '10020', refUrl: 'https://tailo.moe.edu.tw/sam3.html', emoji: '🐛' },
+
+      // 舌齒音 (ts, tsh, s, j)
+      { id: 'init-ts', symbol: 'ts', category: '舌齒音', catDesc: '佇發音的時陣，共舌尖倚近頭前頂排牙齒，才閣共聲音發出來（清不送氣塞擦音 [ts/tɕ]）。', wordTailo: 'tsa-poo', wordHanzi: '查埔', origTone: '1-1', sandhiTone: '7-1', sentence: '頷頸珠是查埔人才有的', note: '男人、男性（1→7變調）。', moeId: '5105', refUrl: 'https://tailo.moe.edu.tw/sam5.html', emoji: '👨' },
+      { id: 'init-tsh', symbol: 'tsh', category: '舌齒音', catDesc: '舌尖靠近上齒背，先塞後擦並強烈送氣（清送氣塞擦音 [tsʰ/tɕʰ]）。', wordTailo: 'tshân-enn', wordHanzi: '田嬰', origTone: '5-1', sandhiTone: '7-1', sentence: '阿明招我去拈田嬰', note: '蜻蜓（5→7變調）。', moeId: '2017', refUrl: 'https://tailo.moe.edu.tw/sam5.html', emoji: '蜻' },
+      { id: 'init-s', symbol: 's', category: '舌齒音', catDesc: '舌尖接近上齒齦形成狹縫，氣流摩擦而出（清擦音 [s/ɕ]）。', wordTailo: 'sî-tsing', wordHanzi: '時鐘', origTone: '5-1', sandhiTone: '7-1', sentence: '囡仔人看無時鐘。', note: '計時的工具（5→7變調）。', moeId: '6073', refUrl: 'https://tailo.moe.edu.tw/sam5.html', emoji: '🕒' },
+      { id: 'init-j', symbol: 'j', category: '舌齒音', catDesc: '舌尖接近齒齦，聲帶振動摩擦發音（濁塞擦／擦音 [dz/dʑ/z]）。', wordTailo: 'jiû-hî', wordHanzi: '鰇魚', origTone: '5-5', sandhiTone: '7-5', sentence: '鰇魚烘無偌久就會蔫。', note: '魷魚（又音 liû-hû）。', moeId: '13048', refUrl: 'https://tailo.moe.edu.tw/sam5.html', emoji: '🦑' },
+
+      // 零聲母與喉音 (Ø, h) — 包含簡報第28~35頁全部8張範例卡
+      { id: 'init-zero-1', symbol: 'Ø (零)', category: '零聲母与喉音', catDesc: '零聲母：無預備 (ī-pī) 輔音的音節，直接由元音起音（如 au）。', wordTailo: 'tê-au', wordHanzi: '茶甌', origTone: '5-1', sandhiTone: '7-1', sentence: '茶甌必開', note: '茶杯（au 為零聲母音節）。', moeId: '6615', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🍵' },
+      { id: 'init-zero-2', symbol: 'Ø (零)', category: '零聲母与喉音', catDesc: '零聲母：無預備輔音，直接發出複元音 áu（第2調）。', wordTailo: 'áu-tsuá', wordHanzi: '拗紙', origTone: '2-2', sandhiTone: '1-2', sentence: '我誠𠢕拗紙', note: '摺紙（原調 2-2，變調 1-2）。', moeId: '4077', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🦢' },
+      { id: 'init-zero-3', symbol: 'Ø (零)', category: '零聲母与喉音', catDesc: '零聲母：直接發出複元音 àu（第3調）。', wordTailo: 'àu-náu', wordHanzi: '懊惱', origTone: '3-2', sandhiTone: '2-2', sentence: '你毋免為著小可代誌佇遮懊惱', note: '心中鬱悶悔恨、煩惱（3→2變調）。', moeId: '11680', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '😟' },
+      { id: 'init-zero-4', symbol: 'Ø (零)', category: '零聲母与喉音', catDesc: '零聲母：直接發出複元音 âu（第5調）。', wordTailo: 'nâ-âu', wordHanzi: '嚨喉', origTone: '5-5', sandhiTone: '7-5', sentence: '我的嚨喉㧎(khê)著一枝魚刺', note: '喉嚨、咽喉（5→7變調）。', moeId: '12766', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🗣️' },
+      { id: 'init-zero-5', symbol: 'Ø / -h', category: '零聲母与喉音', catDesc: '零聲母搭配喉塞入聲韻尾 -h（短促急停）。', wordTailo: 'ah-á', wordHanzi: '鴨仔', origTone: '4-2', sandhiTone: '1-2', sentence: '鴨仔聽雷', note: '鴨子（仔前變調 4→1）。', moeId: '12095', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🦆' },
+      { id: 'init-zero-6', symbol: '-h (入聲)', category: '零聲母与喉音', catDesc: '喉塞音韻尾 -h（第8調高促音 tsua̍h）。', wordTailo: 'ka-tsua̍h', wordHanzi: '虼蚻', origTone: '1-8', sandhiTone: '7-8', sentence: '食飽桌頂無拭會唌虼蚻來。', note: '蟑螂（1→7變調）。', moeId: '5489', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🪳' },
+      { id: 'init-zero-7', symbol: '-h (入聲)', category: '零聲母与喉音', catDesc: '喉塞入聲韻尾 -h：發音短促急停，第4調變第2調。', wordTailo: 'kauh-pínn', wordHanzi: '𩛩扁', origTone: '4-2', sandhiTone: '2-2', sentence: '車予機器𩛩扁。', note: '輾扁、壓扁（h入聲變調 4→2）。', moeId: '13498', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🚗' },
+      { id: 'init-h', symbol: 'h', category: '零聲母与喉音', catDesc: '喉音 h：氣流通過聲門摩擦發音（清聲門擦音 [h]）。', wordTailo: 'hio̍h-á', wordHanzi: '葉仔', origTone: '8-2', sandhiTone: '7-2', sentence: '共袂食得的菜葉仔揀掉', note: '葉子（仔前變調 8→7）。', moeId: '9979', refUrl: 'https://tailo.moe.edu.tw/sam1.html', emoji: '🍃' }
+    ];
+
+    const FINALS_DATA = [
+      // 1A. 單元音 (6)
+      { id: 'fin-a', symbol: 'a', category: '單元音', catDesc: '單元音：由一個元音構成的韻母（低央展唇元音 [a]）。', wordTailo: 'a-má', wordHanzi: '阿媽', origTone: '1-2', sandhiTone: '7-2', sentence: '阿媽去園裡薅番薯', note: '祖母、外婆（1→7變調）。', moeId: '4621', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '👵' },
+      { id: 'fin-i', symbol: 'i', category: '單元音', catDesc: '單元音：高前不圓唇元音 [i]。', wordTailo: 'í-á', wordHanzi: '椅仔', origTone: '2-2', sandhiTone: '1-2', sentence: '攑椅仔來跂跤(kué-kha)。', note: '椅子（仔前變調 2→1）。', moeId: '8492', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🪑' },
+      { id: 'fin-u', symbol: 'u', category: '單元音', catDesc: '單元音：高後圓唇元音 [u]。', wordTailo: 'un-tsuânn', wordHanzi: '溫泉', origTone: '1-5', sandhiTone: '7-5', sentence: '浸溫泉規身軀燒唿唿。', note: '天然熱泉水（1→7變調）。', moeId: '9654', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '♨️' },
+      { id: 'fin-e', symbol: 'e', category: '單元音', catDesc: '單元音：中前不圓唇元音 [e]。', wordTailo: 'ê-á', wordHanzi: '鞋仔', origTone: '5-2', sandhiTone: '7-2', sentence: '這雙鞋仔是新的。', note: '鞋子（仔前變調 5→7）。', moeId: '11531', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '👟' },
+      { id: 'fin-oo', symbol: 'oo', category: '單元音', catDesc: '單元音：中後圓唇元音 [ɔ]（開口較 o 大，嘴唇圓攏）。', wordTailo: 'oo-a', wordHanzi: '烏鴉', origTone: '1-1', sandhiTone: '7-1', sentence: '烏鴉喙，糊瘰瘰，見講見對。', note: '烏鴉（1→7變調）。', moeId: '6315', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🐦‍⬛' },
+      { id: 'fin-o', symbol: 'o', category: '單元音', catDesc: '單元音：半高後圓唇／央元音 [o/ə]。', wordTailo: 'ô-á', wordHanzi: '蚵仔', origTone: '5-2', sandhiTone: '7-2', sentence: '蚵仔麵線「大碗閣滿墘」，料濟氣味好', note: '牡蠣、鮮蚵（仔前變調 5→7）。', moeId: '7820', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🦪' },
+
+      // 1B. 複元音 (10)
+      { id: 'fin-ai', symbol: 'ai', category: '複元音', catDesc: '複元音：由多個元音構成的韻母（a 滑向 i）。', wordTailo: 'ài-sim', wordHanzi: '愛心', origTone: '3-1 (簡報標1-2)', sandhiTone: '2-1', sentence: '你誠無愛心，一直苦毒伊', note: '關懷愛護之心（ài 第3調變第2調）。', moeId: '24891', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '❤️' },
+      { id: 'fin-au', symbol: 'au', category: '複元音', catDesc: '複元音：由 a 滑向 u。', wordTailo: 'nâ-âu', wordHanzi: '嚨喉', origTone: '5-5', sandhiTone: '7-5', sentence: '嚨喉去予魚刺哽著。', note: '咽喉、喉嚨。', moeId: '12766', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🗣️' },
+      { id: 'fin-ia', symbol: 'ia', category: '複元音', catDesc: '複元音：由 i 滑向響度大的 a。', wordTailo: 'iá-kiû', wordHanzi: '野球', origTone: '2-5', sandhiTone: '1-5', sentence: '台灣野球真出名。', note: '棒球（源自日語やきゅう，2→1變調）。', moeId: '8054', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '⚾' },
+      { id: 'fin-iu', symbol: 'iu', category: '複元音', catDesc: '複元音：由 i 滑向 u（調號標在後面的 u）。', wordTailo: 'iû-kio̍k', wordHanzi: '郵局', origTone: '5-8', sandhiTone: '7-8', sentence: '離阮兜上近的郵局佇佗位？', note: '辦理郵政事務的機關（5→7變調）。', moeId: '9111', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🏣' },
+      { id: 'fin-io', symbol: 'io', category: '複元音', catDesc: '複元音：由 i 滑向 o。', wordTailo: 'io-tuà', wordHanzi: '腰帶', origTone: '1-3', sandhiTone: '7-3', sentence: '腰帶愛買新的啦', note: '束在腰間的皮帶（1→7變調）。', moeId: '9939', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🎗️' },
+      { id: 'fin-ua', symbol: 'ua', category: '複元音', catDesc: '複元音：由 u 滑向 a。', wordTailo: 'sio-uá', wordHanzi: '相倚', origTone: '1-2', sandhiTone: '7-2', sentence: '你莫佮我坐相倚，較袂熱。', note: '互相靠近、挨在一起（1→7變調）。', moeId: '5261', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '👥' },
+      { id: 'fin-ui', symbol: 'ui', category: '複元音', catDesc: '複元音：由 u 滑向 i（調號標在 i 上）。', wordTailo: 'uì-kuânn', wordHanzi: '畏寒', origTone: '3-5', sandhiTone: '2-5', sentence: '聽著遮的鬼仔古，我直直起畏寒。', note: '怕冷、打冷顫（3→2變調）。', moeId: '5275', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🥶' },
+      { id: 'fin-ue', symbol: 'ue', category: '複元音', catDesc: '複元音：由 u 滑向 e。', wordTailo: 'ue-á', wordHanzi: '鍋仔', origTone: '1-2', sandhiTone: '7-2', sentence: '灶跤誠濟鐵鍋仔', note: '鍋子（仔前變調 1→7）。', moeId: '12421', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🍲' },
+      { id: 'fin-iau', symbol: 'iau', category: '複元音', catDesc: '三合複元音：i + a + u（調號標在響度最大的 a 上）。', wordTailo: 'pak-tóo-iau', wordHanzi: '腹肚枵', origTone: '4-2-1', sandhiTone: '8-2-1', sentence: '紅嬰仔腹肚枵矣。', note: '肚子餓（簡報亦作 bak-tóo-iau）。', moeId: '9909', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '🍔' },
+      { id: 'fin-uai', symbol: 'uai', category: '複元音', catDesc: '三合複元音：u + a + i（調號標在 a 上）。', wordTailo: 'uai-ko', wordHanzi: '歪哥', origTone: '1-1', sandhiTone: '7-1', sentence: '伊這个人真清廉，袂歪哥', note: '貪汙、食錢 tsia̍h-tsînn（1→7變調）。', moeId: '5150', refUrl: 'https://tailo.moe.edu.tw/ium1.html', emoji: '💼' },
+
+      // 2. 鼻化元音 (12)
+      { id: 'fin-ann', symbol: 'ann', category: '鼻化元音', catDesc: '鼻化元音：發音時氣流對喙空（口腔）佮鼻空（鼻腔）同齊流出的元音。', wordTailo: 'phànn-thuànn', wordHanzi: '冇炭', origTone: '3-3', sandhiTone: '2-3', sentence: '燒過的炭叫做冇炭。', note: '質地鬆散的木炭（3→2變調）。', moeId: '1253', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🪨' },
+      { id: 'fin-inn', symbol: 'inn', category: '鼻化元音', catDesc: '鼻化元音：i 的鼻化音（口腔與鼻腔同時共鳴）。', wordTailo: 'huat-ínn', wordHanzi: '發穎', origTone: '4-2', sandhiTone: '8-2', sentence: '樹仔發穎矣！', note: '發芽、萌芽（t入聲變調 4→8）。', moeId: '8752', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🌱' },
+      { id: 'fin-enn', symbol: 'enn', category: '鼻化元音', catDesc: '鼻化元音：e 的鼻化音。', wordTailo: 'enn-á', wordHanzi: '嬰仔', origTone: '1-2', sandhiTone: '7-2', sentence: '紅嬰仔哭甲一身軀汗。', note: '小嬰兒（仔前變調 1→7）。', moeId: '12150', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '👶' },
+      { id: 'fin-onn', symbol: 'onn', category: '鼻化元音', catDesc: '鼻化元音：oo/o 的鼻化音。', wordTailo: 'onn-onn-kiò', wordHanzi: '嗚嗚叫', origTone: '1-1-3', sandhiTone: '7-7-3', sentence: '蠓仔佇耳空邊嗚嗚叫。', note: '蚊子嗡嗡叫的擬聲詞。', moeId: '9350', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🦟' },
+      { id: 'fin-ainn', symbol: 'ainn', category: '鼻化元音', catDesc: '鼻化複元音：ai 的鼻化音。', wordTailo: 'āinn-gín-á', wordHanzi: '偝囡仔', origTone: '7-2-2', sandhiTone: '3-1-2', sentence: '外口風透，莫偝囡仔出門', note: '背小孩（偝 āinn 7→3 變調）。', moeId: '6915', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🤱' },
+      { id: 'fin-aunn', symbol: 'aunn', category: '鼻化元音', catDesc: '鼻化複元音：au 的鼻化音。', wordTailo: 'aunn-aunn-kiò', wordHanzi: '喵喵叫 (aunn)', origTone: '1-1-3', sandhiTone: '7-7-3', sentence: '貓仔佇遐 aunn-aunn-kiò。', note: '形容貓叫或嬰兒啼哭的鼻化擬聲詞。', moeId: '28384', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🐱' },
+      { id: 'fin-iann', symbol: 'iann', category: '鼻化元音', catDesc: '鼻化複元音：ia 的鼻化音。', wordTailo: 'iánn-phìnn', wordHanzi: '影片', origTone: '2-3', sandhiTone: '1-3', sentence: '這齣影片你有看過無？', note: '電影、影片（2→1變調）。', moeId: '11023', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🎬' },
+      { id: 'fin-iunn', symbol: 'iunn', category: '鼻化元音', catDesc: '鼻化複元音：iu 的鼻化音。', wordTailo: 'uan-iunn', wordHanzi: '鴛鴦', origTone: '1-1', sandhiTone: '7-1', sentence: '𪜶兩个袂輸一對鴛鴦。', note: '鴛鴦水鳥，比喻恩愛夫妻（1→7變調）。', moeId: '12118', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🦆' },
+      { id: 'fin-uinn', symbol: 'uinn', category: '鼻化元音', catDesc: '鼻化複元音：ui 的鼻化音。', wordTailo: 'kuinn-mn̂g', wordHanzi: '關門', origTone: '1-5', sandhiTone: '7-5', sentence: '你入來的時，紲手關門。', note: '把門關上（亦作 kuainn-mn̂g）。', moeId: '12909', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🚪' },
+      { id: 'fin-iaunn', symbol: 'iaunn', category: '鼻化元音', catDesc: '鼻化三合元音：iau 的鼻化音。', wordTailo: 'iaunn', wordHanzi: '喓', origTone: '1', sandhiTone: '1', sentence: '佮紅嬰仔耍覕相揣「喓 (iaunn)！」', note: '逗弄小嬰兒玩躲迷藏突然出現時發出的聲音。', moeId: '8171', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🙌' },
+      { id: 'fin-uann', symbol: 'uann', category: '鼻化元音', catDesc: '鼻化複元音：ua 的鼻化音。', wordTailo: 'hué-suann', wordHanzi: '火山', origTone: '2-1', sandhiTone: '1-1', sentence: '台北敢有火山？', note: '火山（2→1變調）。', moeId: '1222', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '🌋' },
+      { id: 'fin-uainn', symbol: 'uainn', category: '鼻化元音', catDesc: '鼻化三合元音：uai 的鼻化音。', wordTailo: 'kuainn-ki', wordHanzi: '關機', origTone: '1-1', sandhiTone: '7-1', sentence: '我毋知影欲按怎關機？', note: '關閉機器或手機電源（1→7變調）。', moeId: '23542', refUrl: 'https://tailo.moe.edu.tw/ium2.html', emoji: '📴' },
+
+      // 3A. 鼻音韻母 -m (4)
+      { id: 'fin-am', symbol: 'am', category: '鼻音m', catDesc: 'm鼻音韻母：先發頭前的元音 a，接紲合唇，氣流對鼻空出來。', wordTailo: 'tshuì-am', wordHanzi: '喙罨', origTone: '3-1', sandhiTone: '2-1', sentence: '騎車愛掛喙罨。', note: '口罩（3→2變調）。', moeId: '8231', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '😷' },
+      { id: 'fin-im', symbol: 'im', category: '鼻音m', catDesc: 'm鼻音韻母：先發元音 i，再閉合雙唇由鼻腔出氣。', wordTailo: 'tshò-im', wordHanzi: '噪音', origTone: '3-1', sandhiTone: '2-1', sentence: '胖虎唱歌敢若噪音。', note: '嘈雜刺耳的聲音（3→2變調）。', moeId: '23530', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🔊' },
+      { id: 'fin-om', symbol: 'om', category: '鼻音m', catDesc: 'm鼻音韻母：先發元音 o，再閉合雙唇由鼻腔出氣。', wordTailo: 'om ba̍k-tsiu', wordHanzi: '掩目睭', origTone: '1 8-1', sandhiTone: '7 4-1', sentence: '共目睭掩起來。', note: '遮住眼睛（掩 又音 am / om / ng）。', moeId: '7313', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🙈' },
+      { id: 'fin-iam', symbol: 'iam', category: '鼻音m', catDesc: 'm鼻音韻母：ia 結合雙唇鼻音尾 -m。', wordTailo: 'iam-ke', wordHanzi: '閹雞', origTone: '1-1', sandhiTone: '7-1', sentence: '閹雞趁鳳飛。', note: '比喻如同東施效顰一樣不自量力地模仿別人。', moeId: '12026', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🐔' },
+
+      // 3B. 鼻音韻母 -n (5)
+      { id: 'fin-an', symbol: 'an', category: '鼻音n', catDesc: 'n鼻音韻母：先發頭前的元音，接紲共舌尖囥佇頭前頂，氣流對鼻空出來。', wordTailo: 'an-tsīng', wordHanzi: '安靜', origTone: '1-7', sandhiTone: '7-7', sentence: '你較安靜咧!', note: '安靜無聲（1→7變調）。', moeId: '2410', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🤫' },
+      { id: 'fin-in', symbol: 'in', category: '鼻音n', catDesc: 'n鼻音韻母：元音 i 結合舌尖鼻音尾 -n。', wordTailo: 'in-iân', wordHanzi: '姻緣', origTone: '1-5', sandhiTone: '7-5', sentence: '姻緣天註定', note: '男女結婚的緣分（1→7變調）。', moeId: '4847', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '💑' },
+      { id: 'fin-un', symbol: 'un', category: '鼻音n', catDesc: 'n鼻音韻母：元音 u 結合舌尖鼻音尾 -n。', wordTailo: 'kám-un', wordHanzi: '感恩', origTone: '2-1', sandhiTone: '1-1', sentence: '非常感恩你共我鬥相共', note: '感謝恩惠（2→1變調）。', moeId: '9449', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🙏' },
+      { id: 'fin-ian', symbol: 'ian', category: '鼻音n', catDesc: 'n鼻音韻母：複元音 ia 結合舌尖鼻音尾 -n。', wordTailo: 'ian-hué', wordHanzi: '煙火', origTone: '1-2', sandhiTone: '7-2', sentence: '放煙火的時陣愛注意', note: '煙火、花火（1→7變調）。', moeId: '9697', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🎆' },
+      { id: 'fin-uan', symbol: 'uan', category: '鼻音n', catDesc: 'n鼻音韻母：複元音 ua 結合舌尖鼻音尾 -n。', wordTailo: 'tshiú-uán', wordHanzi: '手腕', origTone: '2-2', sandhiTone: '1-2', sentence: '手腕遮有烏青。', note: '手掌與手臂相接處（2→1變調）。', moeId: '29943', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '💪' },
+
+      // 3C. 鼻音韻母 -ng (6)
+      { id: 'fin-ang', symbol: 'ang', category: '鼻音ng', catDesc: 'ng鼻音韻母：先發頭前的元音，接紲共喙舌向後搝，氣流對鼻空出來。', wordTailo: 'ang-á', wordHanzi: '尪仔', origTone: '1-2', sandhiTone: '7-2', sentence: '尪仔頭袂䆀 (Ang-á-thâu bē-bái)。', note: '人偶、公仔；引申五官長相不錯（仔前變調 1→7）。', moeId: '3071', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🎎' },
+      { id: 'fin-ing', symbol: 'ing', category: '鼻音ng', catDesc: 'ng鼻音韻母：元音 i 結合舌根鼻音尾 -ng。', wordTailo: 'ing-gí', wordHanzi: '英語', origTone: '1-2', sandhiTone: '7-2', sentence: '英語老師歇睏日出誠濟作業', note: '英國、美國語言（1→7變調）。', moeId: '22655', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '💬' },
+      { id: 'fin-ong', symbol: 'ong', category: '鼻音ng', catDesc: 'ng鼻音韻母：元音 o 結合舌根鼻音尾 -ng。', wordTailo: 'hong-tshue', wordHanzi: '風吹', origTone: '1-1', sandhiTone: '7-1', sentence: '放風吹有啥物撇步？', note: '風箏（1→7變調）。', moeId: '5592', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🪁' },
+      { id: 'fin-iang', symbol: 'iang', category: '鼻音ng', catDesc: 'ng鼻音韻母：複元音 ia 結合舌根鼻音尾 -ng。', wordTailo: 'khiang-á', wordHanzi: '勍仔', origTone: '1-2', sandhiTone: '7-2', sentence: '彼个勍仔予警察掠著矣。', note: '小偷、扒手（仔前變調 1→7）。', moeId: '5810', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🕵️' },
+      { id: 'fin-iong', symbol: 'iong', category: '鼻音ng', catDesc: 'ng鼻音韻母：複元音 io 結合舌根鼻音尾 -ng。', wordTailo: 'kok-tiong', wordHanzi: '國中', origTone: '4-1', sandhiTone: '8-1', sentence: '我佇咧國中做老師。', note: '國民中學（k入聲變調 4→8）。', moeId: '7084', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🏫' },
+      { id: 'fin-uang', symbol: 'uang', category: '鼻音ng', catDesc: 'ng鼻音韻母：複元音 ua 結合舌根鼻音尾 -ng。', wordTailo: 'kui-uang-kui-tóng', wordHanzi: '規嚾規黨', origTone: '1-1-1-2', sandhiTone: '7-1-7-2', sentence: '伊考牢好學校毋去讀，煞佮人規嚾規黨做𨑨迌仔', note: '成群結黨。', moeId: '14295', refUrl: 'https://tailo.moe.edu.tw/ium3.html', emoji: '🕺' },
+
+      // 4A. 入聲韻母 -h (13)
+      { id: 'fin-ah', symbol: 'ah', category: '入聲h', catDesc: 'h入聲韻母：發音時短促急停，喙微微仔褫開（喉塞音韻尾 [-ʔ]）。', wordTailo: 'ah-bó', wordHanzi: '鴨母', origTone: '4-2', sandhiTone: '2-2', sentence: '鴨母咧生卵。', note: '母鴨（h入聲變調：4→2）。', moeId: '12098', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🦆' },
+      { id: 'fin-ih', symbol: 'ih', category: '入聲h', catDesc: 'h入聲韻母：元音 i 後急停收喉塞音 -h。', wordTailo: 'bih-sio-tshuē', wordHanzi: '覕相揣', origTone: '4-1-7', sandhiTone: '2-7-7', sentence: '蹌跤雞佮覕相揣攏是較早的囡仔上愛的囡仔耍。', note: '捉迷藏（h入聲變調 4→2）。', moeId: '9007', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🙈' },
+      { id: 'fin-uh', symbol: 'uh', category: '入聲h', catDesc: 'h入聲韻母：元音 u 後急停收喉塞音 -h。', wordTailo: 'suh-kóng', wordHanzi: '欶管', origTone: '4-2', sandhiTone: '2-2', sentence: '做伙用環保的欶管。', note: '吸管（h入聲變調 4→2）。', moeId: '7502', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🥤' },
+      { id: 'fin-eh', symbol: 'eh', category: '入聲h', catDesc: 'h入聲韻母：元音 e 後急停收喉塞音 -h。', wordTailo: 'a-peh', wordHanzi: '阿伯', origTone: '1-4', sandhiTone: '7-4', sentence: '阿伯𠢕早', note: '伯父、對年長男性的尊稱。', moeId: '4539', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '👴' },
+      { id: 'fin-oh', symbol: 'oh', category: '入聲h', catDesc: 'h入聲韻母：元音 o 後急停收喉塞音 -h。', wordTailo: 'soh-á', wordHanzi: '索仔', origTone: '4-2', sandhiTone: '1-2', sentence: '提一條索仔予我', note: '繩子（仔前特殊變調：4→1）。', moeId: '6492', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🪢' },
+      { id: 'fin-auh', symbol: 'auh', category: '入聲h', catDesc: 'h入聲韻母：複元音 au 後急停收喉塞音 -h。', wordTailo: 'kauh-pínn', wordHanzi: '𩛩扁', origTone: '4-2', sandhiTone: '2-2', sentence: '車予機器𩛩扁。', note: '被車輪或機器輾壓變扁（h入聲 4→2）。', moeId: '13498', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🚜' },
+      { id: 'fin-iah', symbol: 'iah', category: '入聲h', catDesc: 'h入聲韻母：複元音 ia 後急停收喉塞音 -h。', wordTailo: 'tsûn-tsiah', wordHanzi: '船隻', origTone: '5-4', sandhiTone: '7-4', sentence: '船隻駛遠看無矣', note: '船舶總稱（5→7變調）。', moeId: '24860', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🚢' },
+      { id: 'fin-iuh', symbol: 'iuh', category: '入聲h', catDesc: 'h入聲韻母：複元音 iu 後急停收喉塞音 -h。', wordTailo: 'tiuh-kin', wordHanzi: '搐筋 / 糾筋', origTone: '4-1 (亦作 kiù-kin 3-1)', sandhiTone: '2-1', sentence: '泅水的時陣上驚跤糾筋', note: '抽筋、肌肉痙攣抽痛。', moeId: '4463', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🦵' },
+      { id: 'fin-ioh', symbol: 'ioh', category: '入聲h', catDesc: 'h入聲韻母：複元音 io 後急停收喉塞音 -h。', wordTailo: 'tsioh-tsînn', wordHanzi: '借錢', origTone: '4-5', sandhiTone: '2-5', sentence: '借錢若毋還，後擺無人欲借你。', note: '借用金錢（h入聲變調 4→2）。', moeId: '5775', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '💰' },
+      { id: 'fin-uah', symbol: 'uah', category: '入聲h', catDesc: 'h入聲韻母：複元音 ua 後急停收喉塞音 -h。', wordTailo: 'hái-thuah', wordHanzi: '海獺', origTone: '2-4', sandhiTone: '1-4', sentence: '海獺是食肉的，毋是食菜的', note: '海棲哺乳動物海獺（2→1變調）。', moeId: '6221', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🦦' },
+      { id: 'fin-uih', symbol: 'uih', category: '入聲h', catDesc: 'h入聲韻母：複元音 ui 後急停收喉塞音 -h。', wordTailo: 'su-huih', wordHanzi: '輸血', origTone: '1-4', sandhiTone: '7-4', sentence: '受傷愛輸血，伊是啥物血型？', note: '輸血（又音 su-hueh）。', moeId: '11963', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🩸' },
+      { id: 'fin-ueh', symbol: 'ueh', category: '入聲h', catDesc: 'h入聲韻母：複元音 ue 後急停收喉塞音 -h。', wordTailo: 'hueh-kin', wordHanzi: '血筋', origTone: '4-1', sandhiTone: '2-1', sentence: '你的血筋浮浮。', note: '血管（h入聲變調 4→2）。', moeId: '2752', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🫀' },
+      { id: 'fin-iauh', symbol: 'iauh', category: '入聲h', catDesc: 'h入聲韻母：三合元音 iau 後急停收喉塞音 -h。', wordTailo: 'hiauh-hiauh', wordHanzi: '藃藃', origTone: '4-4', sandhiTone: '4-4', sentence: '壁紙藃藃', note: '翹起、外翻剝落的樣子。', moeId: '12610', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '📄' },
+
+      // 4B. 入聲韻母 -p (4)
+      { id: 'fin-ap', symbol: 'ap', category: '入聲p', catDesc: 'p入聲韻母：發音短促急停，了後喙唇（嘴唇）收束合起來（唯閉雙唇塞音尾 [-p̚]）。', wordTailo: 'tshân-kap-á', wordHanzi: '田蛤仔', origTone: '5-4-2', sandhiTone: '7-1-2', sentence: '水雞 (tsuí-ke) 就是田蛤仔啦', note: '青蛙、田蛙（kap 在仔前變第1調）。', moeId: '1969', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🐸' },
+      { id: 'fin-ip', symbol: 'ip', category: '入聲p', catDesc: 'p入聲韻母：元音 i 後雙唇緊閉收束 [-p̚]。', wordTailo: 'hip-siòng-ki', wordHanzi: '翕相機', origTone: '4-3-1', sandhiTone: '8-2-1', sentence: '這臺翕相機貴參參！', note: '照相機（p入聲變調 4→8）。', moeId: '8914', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '📷' },
+      { id: 'fin-op', symbol: 'op', category: '入聲p', catDesc: 'p入聲韻母：元音 o 後雙唇緊閉收束 [-p̚]。', wordTailo: 'hop ia̍h-á', wordHanzi: '欱蝶仔', origTone: '4 8-2', sandhiTone: '8 7-2', sentence: '我用手欱著一隻蝶仔。', note: '用雙手合掌撲抓蝴蝶（欱 亦作 hap）。', moeId: '6150', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🦋' },
+      { id: 'fin-iap', symbol: 'iap', category: '入聲p', catDesc: 'p入聲韻母：複元音 ia 後雙唇緊閉收束 [-p̚]。', wordTailo: 'âng-thiap-á', wordHanzi: '紅帖仔', origTone: '5-4-2', sandhiTone: '7-1-2', sentence: '你敢有收著林的的紅帖仔？', note: '喜帖（thiap 在仔前變調 4→1）。', moeId: '5399', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '💌' },
+
+      // 4C. 入聲韻母 -t (5)
+      { id: 'fin-at', symbol: 'at', category: '入聲t', catDesc: 't入聲韻母：發音短促急停，了後共舌尖囥佇頭前頂、下排喙齒交界的所在（唯閉舌尖塞音尾 [-t̚]）。', wordTailo: 'at-tshiú-pà', wordHanzi: '遏手把', origTone: '4-2-3', sandhiTone: '8-1-3', sentence: '阮來遏手把看啥會贏', note: '比腕力、掰手腕（t入聲變調 4→8）。', moeId: '10165', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '💪' },
+      { id: 'fin-it', symbol: 'it', category: '入聲t', catDesc: 't入聲韻母：元音 i 後舌尖抵上齒齦急停 [-t̚]。', wordTailo: 'iân-pit', wordHanzi: '鉛筆', origTone: '5-4', sandhiTone: '7-4', sentence: '鉛筆一枝偌濟？', note: '書寫工具鉛筆（5→7變調）。', moeId: '10273', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '✏️' },
+      { id: 'fin-ut', symbol: 'ut', category: '入聲t', catDesc: 't入聲韻母：元音 u 後舌尖抵上齒齦急停 [-t̚]。', wordTailo: 'kha-kut', wordHanzi: '跤骨', origTone: '1-4', sandhiTone: '7-4', sentence: '伊跤骨摔斷去。', note: '腿和腳的骨頭（1→7變調）。', moeId: '10099', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🦴' },
+      { id: 'fin-iat', symbol: 'iat', category: '入聲t', catDesc: 't入聲韻母：複元音 ia 後舌尖抵上齒齦急停 [-t̚]。', wordTailo: 'kiat-á', wordHanzi: '桔仔', origTone: '4-2', sandhiTone: '1-2', sentence: '桔仔足酸，誠歹食。', note: '金桔（仔前特殊變調：4→1）。', moeId: '6164', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🍊' },
+      { id: 'fin-uat', symbol: 'uat', category: '入聲t', catDesc: 't入聲韻母：複元音 ua 後舌尖抵上齒齦急停 [-t̚]。', wordTailo: 'huat-kuann', wordHanzi: '法官', origTone: '4-1', sandhiTone: '8-1', sentence: '法官是一个硬篤的工課', note: '司法審判官員（t入聲變調 4→8）。', moeId: '4273', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '⚖️' },
+
+      // 4D. 入聲韻母 -k (5)
+      { id: 'fin-ak', symbol: 'ak', category: '入聲k', catDesc: 'k入聲韻母：發音短促急停，舌根抬起使嚨喉有束喉塞住的現象（唯閉舌根塞音尾 [-k̚]）。', wordTailo: 'ak-tsuí', wordHanzi: '沃水', origTone: '4-2', sandhiTone: '8-2', sentence: '遮的花愛沃水。', note: '澆水（k入聲變調 4→8）。', moeId: '3292', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🚿' },
+      { id: 'fin-ik', symbol: 'ik', category: '入聲k', catDesc: 'k入聲韻母：元音 i 後舌根塞住急停 [-k̚]。', wordTailo: 'tik-sún', wordHanzi: '竹筍', origTone: '4-2', sandhiTone: '8-2', sentence: '遮的竹筍傷過苦', note: '竹子的嫩芽（k入聲變調 4→8）。', moeId: '2747', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🎍' },
+      { id: 'fin-ok', symbol: 'ok', category: '入聲k', catDesc: 'k入聲韻母：元音 o 後舌根塞住急停 [-k̚]。', wordTailo: 'ki-tok-kàu', wordHanzi: '基督教', origTone: '1-4-3', sandhiTone: '7-8-3', sentence: '基督教對誠久進前就有矣', note: '世界主要宗教之一（tok 4→8變調）。', moeId: '7120', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '⛪' },
+      { id: 'fin-iak', symbol: 'iak', category: '入聲k', catDesc: 'k入聲韻母：複元音 ia 後舌根塞住急停 [-k̚]。', wordTailo: 'siak--tó', wordHanzi: '摔倒', origTone: '4-2 (後字輕聲)', sandhiTone: '4-2', sentence: '伊昨昏無細膩佇便所摔倒。', note: '跌倒（後字輕聲 --tó 前維持本調 4）。', moeId: '10514', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🤕' },
+      { id: 'fin-iok', symbol: 'iok', category: '入聲k', catDesc: 'k入聲韻母：複元音 io 後舌根塞住急停 [-k̚]。', wordTailo: 'mâ-tshiok', wordHanzi: '麻雀', origTone: '5-4', sandhiTone: '7-4', sentence: '過年時仔伊攏會走來阮兜拍麻雀。', note: '麻將（5→7變調）。', moeId: '8123', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🀄' },
+
+      // 5. 聲化韻母 (2)
+      { id: 'fin-syl-m', symbol: 'm', category: '聲化韻母', catDesc: '聲化韻母 m：發音時喙唇合起來，單獨以鼻音構成音節，氣流對鼻空洩出來 [m̩]。', wordTailo: 'm̄-thang', wordHanzi: '毋通', origTone: '7-1', sandhiTone: '3-1', sentence: '你毋通傷晏轉來。', note: '不可以、不要（7→3變調）。', moeId: '1060', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🙅' },
+      { id: 'fin-syl-ng', symbol: 'ng', category: '聲化韻母', catDesc: '聲化韻母 ng：發音時喙舌（舌根）向後，氣流對鼻空洩出來構成音節 [ŋ̍]。', wordTailo: 'khiā-n̂g', wordHanzi: '徛黃', origTone: '7-5', sandhiTone: '3-5', sentence: '一日徙栽，三日徛黃 (Tsi̍t ji̍t suá-tsai, sann ji̍t khiā-n̂g)。', note: '樹木移植後暫時枯黃，引申勸人要有定性。', moeId: '7262', refUrl: 'https://tailo.moe.edu.tw/ium4.html', emoji: '🥀' }
+    ];
+
+    // 8 Tones Mnemonic Data (Slide 3)
+    const TONES_MNEMONIC = [
+      { tone: 1, name: '第1調 (陰平)', pitch: '高平調 (44)', mark: '無調號 (a)', hanzi: '獅', tailo: 'sai', exSub: 'a', moeId: '9721', merged: false },
+      { tone: 2, name: '第2調 (陰上)', pitch: '高降調 (53)', mark: '銳音符 (á)', hanzi: '虎', tailo: 'hóo', exSub: 'á', moeId: '21895', merged: false },
+      { tone: 3, name: '第3調 (陰去)', pitch: '低降調 (21)', mark: '抑音符 (à)', hanzi: '豹', tailo: 'pà', exSub: 'à', moeId: '6669', merged: false },
+      { tone: 4, name: '第4調 (陰入)', pitch: '中促調 (32)', mark: '-p/-t/-k/-h', hanzi: '鱉', tailo: 'pih', exSub: 'ah', moeId: '', merged: false },
+      { tone: 5, name: '第5調 (陽平)', pitch: '低升調 (24)', mark: '揚抑符 (â)', hanzi: '猴', tailo: 'kâu', exSub: 'â', moeId: '8571', merged: false },
+      { tone: 6, name: '第6調 (陽上)', pitch: '與第2調同音合併', mark: '✕ (併入第2調)', hanzi: '狗', tailo: 'káu', exSub: '(同á)', moeId: '8718', merged: true },
+      { tone: 7, name: '第7調 (陽去)', pitch: '中平調 (33)', mark: '長音符 (ā)', hanzi: '象', tailo: 'tshiūnn', exSub: 'ā', moeId: '16174', merged: false },
+      { tone: 8, name: '第8調 (陽入)', pitch: '高促調 (4)', mark: '直立符 (a̍h)', hanzi: '鹿', tailo: 'lo̍k', exSub: 'a̍h', moeId: '8094', merged: false }
+    ];
+
+    // General Tone Sandhi Rules (Slide 5)
+    const SANDHI_RULES_DATA = [
+      {
+        id: 'sr-5-7',
+        from: '第 5 調 (â)',
+        to: '第 7 調 (ā)',
+        badge: '5 ➔ 7',
+        color: 'bg-[#1B4D89] text-white',
+        desc: '陽平調（低升 24）在連讀前字時，變為中平調（第 7 調 33，偏漳／高雄混合腔主流）或低調。',
+        examples: [
+          { hanzi: '頭家', tailo: 'thâu-ke', change: '5-1 ➔ 7-1', moeId: '12062' },
+          { hanzi: '毛筆', tailo: 'môo-pit', change: '5-4 ➔ 7-4', moeId: '26043' },
+          { hanzi: '田嬰', tailo: 'tshân-enn', change: '5-1 ➔ 7-1', moeId: '2017' }
+        ]
+      },
+      {
+        id: 'sr-1-7',
+        from: '第 1 調 (a)',
+        to: '第 7 調 (ā)',
+        badge: '1 ➔ 7',
+        color: 'bg-[#D9381E] text-white',
+        desc: '陰平調（高平 44）在連讀前字時，降低為中平調（第 7 調 33）。與第 5 調變調結果相同！',
+        examples: [
+          { hanzi: '安全', tailo: 'an-tsuân', change: '1-5 ➔ 7-5', moeId: '22169' },
+          { hanzi: '翁某', tailo: 'ang-bóo', change: '1-2 ➔ 7-2', moeId: '6504' },
+          { hanzi: '雞公', tailo: 'ke-kang', change: '1-1 ➔ 7-1', moeId: '12661' }
+        ]
+      },
+      {
+        id: 'sr-7-3',
+        from: '第 7 調 (ā)',
+        to: '第 3 調 (à)',
+        badge: '7 ➔ 3',
+        color: 'bg-[#F2C12E] text-zinc-900',
+        desc: '陽去調（中平 33）在連讀前字時，變為低降調（第 3 調 21）。',
+        examples: [
+          { hanzi: '飯匙', tailo: 'pn̄g-sî', change: '7-5 ➔ 3-5', moeId: '9256' },
+          { hanzi: '佇遮', tailo: 'tī-tsia', change: '7-1 ➔ 3-1', moeId: '2858' },
+          { hanzi: '毋通', tailo: 'm̄-thang', change: '7-1 ➔ 3-1', moeId: '1060' }
+        ]
+      },
+      {
+        id: 'sr-3-2',
+        from: '第 3 調 (à)',
+        to: '第 2 調 (á)',
+        badge: '3 ➔ 2',
+        color: 'bg-[#147A6E] text-white',
+        desc: '陰去調（低降 21）在連讀前字時，抬高變為高降調（第 2 調 53）。',
+        examples: [
+          { hanzi: '唱歌', tailo: 'tshiùnn-kua', change: '3-1 ➔ 2-1', moeId: '' },
+          { hanzi: '向望', tailo: 'ǹg-bāng', change: '3-7 ➔ 2-7', moeId: '2211' },
+          { hanzi: '喙罨', tailo: 'tshuì-am', change: '3-1 ➔ 2-1', moeId: '8231' }
+        ]
+      },
+      {
+        id: 'sr-2-1',
+        from: '第 2 調 (á)',
+        to: '第 1 調 (a)',
+        badge: '2 ➔ 1',
+        color: 'bg-zinc-900 text-white',
+        desc: '陰上調（高降 53）在連讀前字時，變為高平調（第 1 調 44）。即簡報重點：「看著第二聲，愛唸第一聲」！',
+        examples: [
+          { hanzi: '等路', tailo: 'tán-lōo', change: '2-7 ➔ 1-7', moeId: '8881' },
+          { hanzi: '買賣', tailo: 'bé-bē', change: '2-7 ➔ 1-7', moeId: '' },
+          { hanzi: '感恩', tailo: 'kám-un', change: '2-1 ➔ 1-1', moeId: '9449' }
+        ]
+      },
+      {
+        id: 'sr-4-8',
+        from: '入聲 4 ⇄ 8',
+        to: 'p/t/k 互變・-h 變 2/3',
+        badge: '4 ⇄ 8 / -h',
+        color: 'bg-purple-800 text-white',
+        desc: '-p, -t, -k 入聲字第 4 調與第 8 調互變（4↔8）；而喉塞音 -h 入聲第 4 調變第 2 調（4→2），第 8 調變第 3 調（8→3）。',
+        examples: [
+          { hanzi: '插手 (-p)', tailo: 'tshap-tshiú', change: '4-2 ➔ 8-2', moeId: '8364' },
+          { hanzi: '國家 (-k)', tailo: 'kok-ka', change: '4-1 ➔ 8-1', moeId: '' },
+          { hanzi: '肉粽 (-h)', tailo: 'bah-tsàng', change: '4-3 ➔ 2-3', moeId: '2775' },
+          { hanzi: '實在 (-t)', tailo: 'si̍t-tsāi', change: '8-7 ➔ 4-7', moeId: '' },
+          { hanzi: '白色 (-h)', tailo: 'pe̍h-sik', change: '8-4 ➔ 3-4', moeId: '' }
+        ]
+      }
+    ];
+
+    // Special 仔 (á) Before Sandhi Data (Slide 6)
+    const A_BEFORE_DATA = {
+      2: [
+        { hanzi: '鳥仔', tailo: 'tsiáu-á', moeId: '8093' },
+        { hanzi: '囡仔', tailo: 'gín-á', moeId: '2142' },
+        { hanzi: '椅仔', tailo: 'í-á', moeId: '8492' },
+        { hanzi: '筍仔', tailo: 'sún-á', moeId: '8839' }
+      ],
+      3: [
+        { hanzi: '蒜仔', tailo: 'suàn-á', moeId: '' },
+        { hanzi: '兔仔', tailo: 'thòo-á', moeId: '3619' },
+        { hanzi: '棍仔', tailo: 'kùn-á', moeId: '8490' },
+        { hanzi: '罐仔', tailo: 'kuàn-á', moeId: '' }
+      ],
+      4: [
+        { hanzi: '橐仔', tailo: 'lok-á', moeId: '7854' },
+        { hanzi: '竹仔', tailo: 'tik-á', moeId: '2629' },
+        { hanzi: '鴨仔', tailo: 'ah-á', moeId: '12095' },
+        { hanzi: '桌仔', tailo: 'toh-á', moeId: '' },
+        { hanzi: '索仔', tailo: 'soh-á', moeId: '6492' },
+        { hanzi: '齒戳仔', tailo: 'khí-thok-á', moeId: '11589' }
+      ],
+      1: [
+        { hanzi: '金仔', tailo: 'kim-á', moeId: '4519' },
+        { hanzi: '杯仔', tailo: 'pue-á', moeId: '4201' },
+        { hanzi: '蚶仔', tailo: 'ham-á', moeId: '' },
+        { hanzi: '尪仔', tailo: 'ang-á', moeId: '3071' },
+        { hanzi: '花矸仔', tailo: 'hue-kan-á', moeId: '' }
+      ],
+      5: [
+        { hanzi: '丸仔', tailo: 'uân-á', moeId: '272' },
+        { hanzi: '麻仔', tailo: 'muâ-á', moeId: '' },
+        { hanzi: '圓仔', tailo: 'înn-á', moeId: '9364' },
+        { hanzi: '鈴仔', tailo: 'lîng-á', moeId: '10262' }
+      ],
+      7: [
+        { hanzi: '檨仔', tailo: 'suāinn-á', moeId: '12189' },
+        { hanzi: '豆仔', tailo: 'tāu-á', moeId: '3409' },
+        { hanzi: '帽仔', tailo: 'bō-á', moeId: '8327' },
+        { hanzi: '袋仔', tailo: 'tē-á', moeId: '7854' }
+      ],
+      8: [
+        { hanzi: '盒仔', tailo: 'a̍p-á', moeId: '' },
+        { hanzi: '鹿仔', tailo: 'lo̍k-á', moeId: '8094' },
+        { hanzi: '葉仔', tailo: 'hio̍h-á', moeId: '9979' },
+        { hanzi: '藥仔', tailo: 'io̍h-á', moeId: '' }
+      ]
+    };
+
+    // 3. Tai-lo Diacritic & Tone Placement Rules
+    const TONE_MARKS = {
+      a: ['a', 'a', 'á', 'à', 'a', 'â', 'á', 'ā', 'a̍'],
+      e: ['e', 'e', 'é', 'è', 'e', 'ê', 'é', 'ē', 'e̍'],
+      i: ['i', 'i', 'í', 'ì', 'i', 'î', 'í', 'ī', 'i̍'],
+      o: ['o', 'o', 'ó', 'ò', 'o', 'ô', 'ó', 'ō', 'o̍'],
+      u: ['u', 'u', 'ú', 'ù', 'u', 'û', 'ú', 'ū', 'u̍'],
+      m: ['m', 'm', 'ḿ', 'm̀', 'm', 'm̂', 'ḿ', 'm̄', 'm̍'],
+      n: ['n', 'n', 'ń', 'ǹ', 'n', 'n̂', 'ń', 'n̄', 'n̍']
+    };
+
+    function applyTailoToneMark(initial, finalStr, toneNum) {
+      let t = parseInt(toneNum, 10) || 1;
+      if (t === 6) t = 2;
+      const isChecked = /[ptkh]$/.test(finalStr);
+      if (isChecked && t !== 4 && t !== 8) {
+        t = 4;
+      } else if (!isChecked && (t === 4 || t === 8)) {
+        t = 1;
+      }
+
+      let f = finalStr;
+      if (f.includes('a')) {
+        f = f.replace('a', TONE_MARKS.a[t]);
+      } else if (f.includes('oo')) {
+        f = f.replace('oo', TONE_MARKS.o[t] + 'o');
+      } else if (f.includes('e')) {
+        f = f.replace('e', TONE_MARKS.e[t]);
+      } else if (f.includes('o')) {
+        f = f.replace('o', TONE_MARKS.o[t]);
+      } else if (f.includes('iu')) {
+        f = f.replace('iu', 'i' + TONE_MARKS.u[t]);
+      } else if (f.includes('ui')) {
+        f = f.replace('ui', 'u' + TONE_MARKS.i[t]);
+      } else if (f.includes('i')) {
+        f = f.replace('i', TONE_MARKS.i[t]);
+      } else if (f.includes('u')) {
+        f = f.replace('u', TONE_MARKS.u[t]);
+      } else if (f === 'ng') {
+        f = TONE_MARKS.n[t] + 'g';
+      } else if (f === 'm') {
+        f = TONE_MARKS.m[t];
+      }
+      return { syllable: initial + f, effectiveTone: t, isChecked };
+    }
+
+    function getSandhiTargetTone(toneNum, finalStr) {
+      const t = parseInt(toneNum, 10);
+      const isHChecked = /h$/.test(finalStr);
+      if (t === 1) return 7;
+      if (t === 5) return 7;
+      if (t === 7) return 3;
+      if (t === 3) return 2;
+      if (t === 2 || t === 6) return 1;
+      if (t === 4) return isHChecked ? 2 : 8;
+      if (t === 8) return isHChecked ? 3 : 4;
+      return 1;
+    }
+
+    // 4. Dual-Layer Pronunciation Engine:
+    // Layer 1: Official MOE Sutian Audio Mirror (ChhoeTaigi KipSutianDataMirror on GitHub Pages)
+    // Layer 2: Custom Web Audio API Formant & Pitch Contour Acoustic Synthesizer
+    let audioCtx = null;
+    let currentHtmlAudio = null;
+
+    function showNowPlaying(title, subtitle) {
+      const bar = document.getElementById('nowPlayingBar');
+      const tEl = document.getElementById('npTitle');
+      const sEl = document.getElementById('npSub');
+      if (bar && tEl && sEl) {
+        tEl.textContent = title;
+        sEl.textContent = subtitle;
+        bar.style.display = 'block';
+      }
+    }
+
+    function hideNowPlaying() {
+      const bar = document.getElementById('nowPlayingBar');
+      if (bar) bar.style.display = 'none';
+    }
+
+    function stopAllAudio() {
+      if (currentHtmlAudio) {
+        currentHtmlAudio.pause();
+        currentHtmlAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      hideNowPlaying();
+    }
+
+    const VOWEL_FORMANTS = {
+      a: [780, 1350],
+      i: [300, 2350],
+      u: [340, 780],
+      e: [480, 1950],
+      oo: [550, 880],
+      o: [460, 1100],
+      m: [280, 950],
+      ng: [300, 1300]
+    };
+
+    function synthesizeTailoSyllableAudio(initial, finalStr, toneNum, delaySec = 0) {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        if (!audioCtx) audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const isChecked = /[ptkh]$/.test(finalStr);
+        const isNasal = /(nn|m|n|ng)$/.test(finalStr);
+        const dur = isChecked ? 0.24 : 0.52;
+        const start = audioCtx.currentTime + delaySec + 0.02;
+        const end = start + dur;
+
+        if (['ph', 'th', 'kh', 'tsh', 's', 'h', 'ts'].includes(initial)) {
+          const bufferSize = Math.floor(audioCtx.sampleRate * 0.065);
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = (Math.random() * 2 - 1) * 0.25;
+          }
+          const whiteNoise = audioCtx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          const noiseFilter = audioCtx.createBiquadFilter();
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.value = initial.includes('s') ? 4200 : 1800;
+          const noiseGain = audioCtx.createGain();
+          noiseGain.gain.setValueAtTime(0.18, start);
+          noiseGain.gain.exponentialRampToValueAtTime(0.01, start + 0.06);
+          whiteNoise.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(audioCtx.destination);
+          whiteNoise.start(start);
+        }
+
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sawtooth';
+
+        const t = parseInt(toneNum, 10) || 1;
+        if (t === 1) {
+          osc.frequency.setValueAtTime(235, start);
+          osc.frequency.linearRampToValueAtTime(235, end);
+        } else if (t === 2 || t === 6) {
+          osc.frequency.setValueAtTime(265, start);
+          osc.frequency.exponentialRampToValueAtTime(145, end);
+        } else if (t === 3) {
+          osc.frequency.setValueAtTime(165, start);
+          osc.frequency.exponentialRampToValueAtTime(112, end);
+        } else if (t === 4) {
+          osc.frequency.setValueAtTime(185, start);
+          osc.frequency.exponentialRampToValueAtTime(150, end);
+        } else if (t === 5) {
+          osc.frequency.setValueAtTime(135, start);
+          osc.frequency.linearRampToValueAtTime(130, start + dur * 0.28);
+          osc.frequency.exponentialRampToValueAtTime(225, end);
+        } else if (t === 7) {
+          osc.frequency.setValueAtTime(182, start);
+          osc.frequency.linearRampToValueAtTime(182, end);
+        } else if (t === 8) {
+          osc.frequency.setValueAtTime(248, start);
+          osc.frequency.exponentialRampToValueAtTime(225, end);
+        }
+
+        let vKey = 'a';
+        if (finalStr.includes('oo')) vKey = 'oo';
+        else if (finalStr.includes('a')) vKey = 'a';
+        else if (finalStr.includes('e')) vKey = 'e';
+        else if (finalStr.includes('o')) vKey = 'o';
+        else if (finalStr.includes('i')) vKey = 'i';
+        else if (finalStr.includes('u')) vKey = 'u';
+        else if (finalStr === 'm') vKey = 'm';
+        else if (finalStr === 'ng') vKey = 'ng';
+
+        const [f1Freq, f2Freq] = VOWEL_FORMANTS[vKey] || [600, 1400];
+
+        const filter1 = audioCtx.createBiquadFilter();
+        filter1.type = 'bandpass';
+        filter1.frequency.setValueAtTime(f1Freq, start);
+        filter1.Q.setValueAtTime(isNasal ? 3.5 : 5.5, start);
+
+        const filter2 = audioCtx.createBiquadFilter();
+        filter2.type = 'peaking';
+        filter2.frequency.setValueAtTime(f2Freq, start);
+        filter2.gain.setValueAtTime(10, start);
+
+        const env = audioCtx.createGain();
+        env.gain.setValueAtTime(0.001, start);
+        env.gain.linearRampToValueAtTime(0.32, start + 0.035);
+        if (isChecked) {
+          env.gain.setValueAtTime(0.30, end - 0.025);
+          env.gain.exponentialRampToValueAtTime(0.0001, end);
+        } else {
+          env.gain.setValueAtTime(0.26, end - 0.09);
+          env.gain.exponentialRampToValueAtTime(0.001, end);
+        }
+
+        osc.connect(filter1);
+        filter1.connect(filter2);
+        filter2.connect(env);
+        env.connect(audioCtx.destination);
+
+        osc.start(start);
+        osc.stop(end + 0.02);
+      } catch (err) {
+        // Ignore audio context restriction errors
+      }
+    }
+
+    function stripDiacriticsAndDetectTone(syl) {
+      let s = syl.toLowerCase().trim();
+      const numMatch = s.match(/^([a-z]+)([1-8])$/);
+      if (numMatch) {
+        return parseInitialAndFinal(numMatch[1], parseInt(numMatch[2], 10));
+      }
+
+      let detectedTone = 0;
+      const toneCharMap = {
+        'á': ['a', 2], 'à': ['a', 3], 'â': ['a', 5], 'ā': ['a', 7], 'a̍': ['a', 8],
+        'é': ['e', 2], 'è': ['e', 3], 'ê': ['e', 5], 'ē': ['e', 7], 'e̍': ['e', 8],
+        'í': ['i', 2], 'ì': ['i', 3], 'î': ['i', 5], 'ī': ['i', 7], 'i̍': ['i', 8],
+        'ó': ['o', 2], 'ò': ['o', 3], 'ô': ['o', 5], 'ō': ['o', 7], 'o̍': ['o', 8],
+        'ú': ['u', 2], 'ù': ['u', 3], 'û': ['u', 5], 'ū': ['u', 7], 'u̍': ['u', 8],
+        'ḿ': ['m', 2], 'm̀': ['m', 3], 'm̂': ['m', 5], 'm̄': ['m', 7], 'm̍': ['m', 8],
+        'ń': ['n', 2], 'ǹ': ['n', 3], 'n̂': ['n', 5], 'n̄': ['n', 7], 'n̍': ['n', 8]
+      };
+
+      s = s.normalize('NFC');
+      for (const [accented, [base, tone]] of Object.entries(toneCharMap)) {
+        if (s.includes(accented)) {
+          s = s.replace(accented, base);
+          detectedTone = tone;
+          break;
+        }
+      }
+      if (s.includes('\u030d')) {
+        s = s.replace('\u030d', '');
+        detectedTone = 8;
+      } else if (s.includes('\u0304')) {
+        s = s.replace('\u0304', '');
+        detectedTone = 7;
+      } else if (s.includes('\u0302')) {
+        s = s.replace('\u0302', '');
+        detectedTone = 5;
+      } else if (s.includes('\u0300')) {
+        s = s.replace('\u0300', '');
+        detectedTone = 3;
+      } else if (s.includes('\u0301')) {
+        s = s.replace('\u0301', '');
+        detectedTone = 2;
+      }
+
+      const clean = s.replace(/[^a-z]/g, '');
+      if (!detectedTone) {
+        detectedTone = /[ptkh]$/.test(clean) ? 4 : 1;
+      }
+      return parseInitialAndFinal(clean, detectedTone);
+    }
+
+    function parseInitialAndFinal(cleanLetters, tone) {
+      if (cleanLetters === 'm' || cleanLetters === 'ng') {
+        return { initial: '', finalStr: cleanLetters, tone };
+      }
+      const initialsOrder = ['tsh', 'ph', 'th', 'kh', 'ts', 'ng', 'p', 'm', 'b', 't', 'n', 'l', 'k', 'g', 's', 'j', 'h'];
+      for (const init of initialsOrder) {
+        if (cleanLetters.startsWith(init) && cleanLetters.length > init.length) {
+          return { initial: init, finalStr: cleanLetters.slice(init.length), tone };
+        }
+      }
+      return { initial: '', finalStr: cleanLetters || 'a', tone };
+    }
+
+    function playPhonemeAudio(symbol, wordTailo, wordHanzi, moeId) {
+      stopAllAudio();
+      showNowPlaying(`${wordTailo}（${wordHanzi}）`, `正在發音：音標 [${symbol}] 示範音`);
+
+      const parts = wordTailo.split(/[-\s]+/).filter(Boolean);
+      const parsedSyllables = parts.map(p => stripDiacriticsAndDetectTone(p));
+
+      if (moeId) {
+        const paddedId = String(moeId).trim();
+        const moeAudioUrl = `https://chhoetaigi.github.io/KipSutianDataMirror/public/20260503-2330/imtong/sutiau/${paddedId}(1).mp3`;
+        const audio = new Audio();
+        audio.crossOrigin = 'anonymous';
+        currentHtmlAudio = audio;
+        let fallbackTriggered = false;
+
+        const runFallback = () => {
+          if (fallbackTriggered) return;
+          fallbackTriggered = true;
+          playSynthesizedSequence(parsedSyllables);
+        };
+
+        audio.onended = () => {
+          hideNowPlaying();
+        };
+        audio.onerror = () => {
+          runFallback();
+        };
+        audio.src = moeAudioUrl;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            runFallback();
+          });
+        }
+      } else {
+        playSynthesizedSequence(parsedSyllables);
+      }
+    }
+
+    function playSynthesizedSequence(parsedSyllables) {
+      let offset = 0;
+      parsedSyllables.forEach((syl, idx) => {
+        let playTone = syl.tone;
+        if (idx < parsedSyllables.length - 1) {
+          playTone = getSandhiTargetTone(syl.tone, syl.finalStr);
+        }
+        synthesizeTailoSyllableAudio(syl.initial, syl.finalStr, playTone, offset);
+        offset += /[ptkh]$/.test(syl.finalStr) ? 0.28 : 0.48;
+      });
+      setTimeout(() => {
+        hideNowPlaying();
+      }, Math.max(900, offset * 1000 + 250));
+    }
+
+    // 5. Render Initials Grid
+    let currentInitialFilter = 'all';
+    function renderInitialsGrid() {
+      const grid = document.getElementById('initialsGrid');
+      if (!grid) return;
+      const filtered = currentInitialFilter === 'all'
+        ? INITIALS_DATA
+        : INITIALS_DATA.filter(item => item.category === currentInitialFilter);
+
+      grid.innerHTML = filtered.map(item => `
+        <div class="bg-white mondrian-card rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-black px-2.5 py-0.5 bg-[#1B4D89] text-white rounded mondrian-border">${item.category}</span>
+              <span class="text-xs font-bold px-2 py-0.5 bg-[#F2C12E]/40 text-zinc-900 rounded mondrian-border">原調 ${item.origTone} ➔ 變 ${item.sandhiTone}</span>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <div class="text-4xl font-black text-[#D9381E] tracking-tight">${item.symbol}</div>
+                <div class="text-xl font-black text-zinc-900 mt-1">${item.wordTailo}</div>
+                <div class="text-sm font-bold text-zinc-700">${item.wordHanzi}</div>
+              </div>
+              <div class="w-16 h-16 rounded-2xl bg-[#FAF7F0] mondrian-border flex items-center justify-center text-3xl shrink-0">
+                ${item.emoji}
+              </div>
+            </div>
+
+            <p class="mt-3 text-xs text-zinc-600 line-clamp-2 leading-relaxed">
+              例句：「${item.sentence}」
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t-2 border-zinc-900 flex items-center gap-2">
+            <button type="button" onclick="playPhonemeAudio('${item.symbol}', '${item.wordTailo}', '${item.wordHanzi}', '${item.moeId}')" class="flex-1 mondrian-btn bg-[#D9381E] text-white font-black text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1">
+              <span>🔊 聽發音</span>
+            </button>
+            <button type="button" onclick="openItemLightbox('${item.id}', 'initial')" class="mondrian-btn bg-white text-zinc-900 font-bold text-xs py-2 px-3 rounded-xl">
+              🔍 詳情
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 6. Render Finals Grid
+    let currentFinalFilter = 'all';
+    function renderFinalsGrid() {
+      const grid = document.getElementById('finalsGrid');
+      const searchInput = document.getElementById('finalSearchInput');
+      if (!grid) return;
+      const q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+
+      const filtered = FINALS_DATA.filter(item => {
+        const matchCat = currentFinalFilter === 'all' || item.category === currentFinalFilter;
+        const matchQuery = !q ||
+          item.symbol.toLowerCase().includes(q) ||
+          item.wordTailo.toLowerCase().includes(q) ||
+          item.wordHanzi.includes(q) ||
+          item.sentence.includes(q);
+        return matchCat && matchQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full bg-white mondrian-card rounded-2xl p-8 text-center font-bold text-zinc-600">找不到符合「${q}」的韻母或例詞，請嘗試其他關鍵字。</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => `
+        <div class="bg-white mondrian-card rounded-2xl p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-black px-2.5 py-0.5 bg-zinc-900 text-white rounded">${item.category}</span>
+              <span class="text-xs font-bold px-2 py-0.5 bg-[#F2C12E]/40 text-zinc-900 rounded mondrian-border">原 ${item.origTone} ➔ 變 ${item.sandhiTone}</span>
+            </div>
+
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <div class="text-3xl sm:text-4xl font-black text-[#D9381E] tracking-tight">-${item.symbol}</div>
+                <div class="text-lg font-black text-zinc-900 mt-1">${item.wordTailo}</div>
+                <div class="text-sm font-bold text-zinc-700">${item.wordHanzi}</div>
+              </div>
+              <div class="w-14 h-14 rounded-2xl bg-[#FAF7F0] mondrian-border flex items-center justify-center text-2xl shrink-0">
+                ${item.emoji}
+              </div>
+            </div>
+
+            <p class="mt-3 text-xs text-zinc-600 line-clamp-2 leading-relaxed">
+              例句：「${item.sentence}」
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t-2 border-zinc-900 flex items-center gap-2">
+            <button type="button" onclick="playPhonemeAudio('${item.symbol}', '${item.wordTailo}', '${item.wordHanzi}', '${item.moeId}')" class="flex-1 mondrian-btn bg-[#1B4D89] text-white font-black text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1">
+              <span>🔊 聽發音</span>
+            </button>
+            <button type="button" onclick="openItemLightbox('${item.id}', 'final')" class="mondrian-btn bg-white text-zinc-900 font-bold text-xs py-2 px-3 rounded-xl">
+              🔍 詳情
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 7. Render Tones Mnemonic & Sandhi Interactive View
+    function renderTonesSection() {
+      const mnemonicGrid = document.getElementById('tonesMnemonicGrid');
+      if (mnemonicGrid) {
+        mnemonicGrid.innerHTML = TONES_MNEMONIC.map(item => `
+          <div class="${item.merged ? 'bg-zinc-200 opacity-85' : 'bg-[#FAF7F0]'} mondrian-border rounded-xl p-3 flex flex-col justify-between text-center">
+            <div>
+              <div class="text-xs font-black ${item.merged ? 'text-red-700' : 'text-zinc-600'}">第 ${item.tone} 聲</div>
+              <div class="text-3xl font-black text-zinc-900 my-1">${item.hanzi}</div>
+              <div class="text-sm font-black text-[#D9381E]">${item.tailo}</div>
+              <div class="text-[11px] font-bold text-zinc-600 mt-1">${item.pitch}</div>
+              <div class="text-[11px] bg-white mondrian-border rounded px-1.5 py-0.5 mt-1.5 font-mono font-bold">${item.exSub}</div>
+            </div>
+            <button type="button" onclick="playPhonemeAudio('第${item.tone}調', '${item.tailo}', '${item.hanzi}', '${item.moeId}')" class="mt-3 w-full mondrian-btn ${item.merged ? 'bg-zinc-700 text-white' : 'bg-[#F2C12E] text-zinc-900'} font-black text-xs py-1.5 rounded-lg">
+              🔊 聽第${item.tone}聲
+            </button>
+          </div>
+        `).join('');
+      }
+
+      const nodesContainer = document.getElementById('sandhiRuleNodes');
+      if (nodesContainer) {
+        nodesContainer.innerHTML = SANDHI_RULES_DATA.map((rule, idx) => `
+          <button type="button" onclick="selectSandhiRule(${idx})" class="sandhi-node-btn mondrian-btn ${rule.color} p-3.5 rounded-xl text-left flex flex-col justify-between">
+            <span class="text-xs opacity-90 font-bold">${rule.from}</span>
+            <span class="text-lg font-black mt-1">${rule.badge}</span>
+            <span class="text-[11px] opacity-90 mt-0.5">變為：${rule.to}</span>
+          </button>
+        `).join('');
+        selectSandhiRule(0);
+      }
+
+      [2, 3, 4, 1, 5, 7, 8].forEach(tNum => {
+        const container = document.getElementById('aBeforeList' + tNum);
+        if (container && A_BEFORE_DATA[tNum]) {
+          container.innerHTML = A_BEFORE_DATA[tNum].map(w => `
+            <button type="button" onclick="playPhonemeAudio('仔前變調', '${w.tailo}', '${w.hanzi}', '${w.moeId}')" class="px-2.5 py-1 bg-white hover:bg-[#F2C12E] mondrian-border rounded-lg font-bold text-xs inline-flex items-center gap-1">
+              <span>🔊 ${w.hanzi} (${w.tailo})</span>
+            </button>
+          `).join('');
+        }
+      });
+    }
+
+    function selectSandhiRule(index) {
+      const rule = SANDHI_RULES_DATA[index];
+      const box = document.getElementById('sandhiDetailBox');
+      if (!rule || !box) return;
+      box.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-zinc-300">
+          <div class="font-black text-base text-zinc-900">📌 變調規則：${rule.badge}（${rule.from} ➔ ${rule.to}）</div>
+        </div>
+        <p class="text-xs sm:text-sm text-zinc-700 mt-2 leading-relaxed">${rule.desc}</p>
+        <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          ${rule.examples.map(ex => `
+            <div class="bg-white mondrian-border rounded-xl p-3 flex items-center justify-between">
+              <div>
+                <div class="font-black text-sm text-zinc-900">${ex.hanzi} <span class="text-[#D9381E]">${ex.tailo}</span></div>
+                <div class="text-[11px] font-bold text-zinc-500">${ex.change}</div>
+              </div>
+              <button type="button" onclick="playPhonemeAudio('${rule.badge}', '${ex.tailo}', '${ex.hanzi}', '${ex.moeId}')" class="mondrian-btn bg-[#F2C12E] text-zinc-900 font-black text-xs px-2.5 py-1.5 rounded-lg">
+                🔊
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 8. Interactive Synthesizer Logic
+    const PITCH_SVG_PATHS = {
+      1: 'M 35 27 L 225 27',
+      2: 'M 35 12 Q 130 25 225 45',
+      3: 'M 35 42 Q 130 55 225 62',
+      4: 'M 35 40 L 145 48',
+      5: 'M 35 55 Q 120 58 225 25',
+      7: 'M 35 42 L 225 42',
+      8: 'M 35 18 L 145 22'
+    };
+
+    const TONE_LABELS = {
+      1: '第1調 (陰平・高平 44)',
+      2: '第2調 (陰上・高降 53)',
+      3: '第3調 (陰去・低降 21)',
+      4: '第4調 (陰入・中促 32)',
+      5: '第5調 (陽平・低升 24)',
+      7: '第7調 (陽去・中平 33)',
+      8: '第8調 (陽入・高促 4)'
+    };
+
+    function updateSynthesizerView() {
+      const initEl = document.getElementById('synInitial');
+      const finalEl = document.getElementById('synFinal');
+      const toneEl = document.getElementById('synTone');
+      const chkReading = document.getElementById('chkReadingRule');
+      if (!initEl || !finalEl || !toneEl) return;
+
+      const initial = initEl.value;
+      const finalStr = finalEl.value;
+      let requestedTone = parseInt(toneEl.value, 10) || 1;
+
+      const { syllable, effectiveTone, isChecked } = applyTailoToneMark(initial, finalStr, requestedTone);
+      if (effectiveTone !== requestedTone) {
+        toneEl.value = String(effectiveTone);
+      }
+
+      const sandhiTone = getSandhiTargetTone(effectiveTone, finalStr);
+      const sandhiRes = applyTailoToneMark(initial, finalStr, sandhiTone);
+
+      const outTailo = document.getElementById('synOutputTailo');
+      const outNote = document.getElementById('synOutputNote');
+      const ruleTag = document.getElementById('synToneRuleTag');
+      const sandhiHint = document.getElementById('synSandhiHint');
+      const pitchPath = document.getElementById('synPitchPath');
+      const moeLink = document.getElementById('linkMoeDictSearch');
+
+      if (outTailo) outTailo.textContent = syllable;
+      if (outNote) {
+        const initText = initial ? `聲母 ${initial}` : '零聲母 (Ø)';
+        const readHint = (chkReading && chkReading.checked && effectiveTone === 2)
+          ? ' ・ 【套用簡報規則：看著第2聲愛唸第1聲】'
+          : '';
+        outNote.textContent = `${initText} + 韻母 -${finalStr} (${isChecked ? '入聲急停韻' : '舒聲韻'})${readHint}`;
+      }
+      if (ruleTag) ruleTag.textContent = TONE_LABELS[effectiveTone] || '';
+      if (sandhiHint) sandhiHint.textContent = `連讀前字變調：${syllable} (第${effectiveTone}調) ➔ ${sandhiRes.syllable} (第${sandhiTone}調)`;
+      if (pitchPath) {
+        const displayTone = (chkReading && chkReading.checked && effectiveTone === 2) ? 1 : effectiveTone;
+        pitchPath.setAttribute('d', PITCH_SVG_PATHS[displayTone] || PITCH_SVG_PATHS[1]);
+      }
+      if (moeLink) {
+        const queryAscii = `${initial}${finalStr}${effectiveTone}`;
+        moeLink.href = `https://sutian.moe.edu.tw/zh-hant/tshiau/?lui=tai_su&tsha=${encodeURIComponent(queryAscii)}`;
+      }
+    }
+
+    function loadQuickPreset(initial, finalStr, toneNum, label, moeId) {
+      const initEl = document.getElementById('synInitial');
+      const finalEl = document.getElementById('synFinal');
+      const toneEl = document.getElementById('synTone');
+      if (initEl) initEl.value = initial;
+      if (finalEl) finalEl.value = finalStr;
+      if (toneEl) toneEl.value = String(toneNum);
+      updateSynthesizerView();
+      const { syllable } = applyTailoToneMark(initial, finalStr, toneNum);
+      playPhonemeAudio(syllable, syllable, label, moeId);
+    }
+
+    // 9. Lightbox Modal Functions
+    let currentLightboxItem = null;
+    function openItemLightbox(itemId, type) {
+      const pool = type === 'initial' ? INITIALS_DATA : FINALS_DATA;
+      const item = pool.find(x => x.id === itemId);
+      if (!item) return;
+      currentLightboxItem = item;
+
+      document.getElementById('lbCategoryBadge').textContent = item.category;
+      document.getElementById('lbTitle').textContent = `${item.symbol} — ${item.wordHanzi} (${item.wordTailo})`;
+      document.getElementById('lbSymbolBox').textContent = type === 'final' ? `-${item.symbol}` : item.symbol;
+      document.getElementById('lbWordTailo').textContent = item.wordTailo;
+      document.getElementById('lbWordHanzi').textContent = item.wordHanzi;
+      document.getElementById('lbEmojiGraphic').textContent = item.emoji;
+      document.getElementById('lbArticulationDesc').textContent = item.catDesc;
+      document.getElementById('lbOrigTone').textContent = `原調：${item.origTone}`;
+      document.getElementById('lbSandhiTone').textContent = `變調：${item.sandhiTone}`;
+      document.getElementById('lbSentenceHanzi').textContent = item.sentence;
+      document.getElementById('lbSentenceNote').textContent = `釋義／備註：${item.note}`;
+
+      const moeLink = document.getElementById('lbMoeDirectLink');
+      if (item.moeId) {
+        moeLink.href = `https://sutian.moe.edu.tw/zh-hant/su/${item.moeId}/`;
+      } else {
+        moeLink.href = `https://sutian.moe.edu.tw/zh-hant/tshiau/?lui=tai_su&tsha=${encodeURIComponent(item.wordHanzi)}`;
+      }
+      document.getElementById('lbTailoRefLink').href = item.refUrl;
+
+      const modal = document.getElementById('lightboxModal');
+      modal.style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // 10. Accordion Toggle (Explicit inline style as required by interactive-web-builder)
+    function toggleAccordion(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById('icon-' + id);
+      if (!el) return;
+      if (el.style.display === 'none') {
+        el.style.display = 'block';
+        if (icon) icon.textContent = '▼';
+      } else {
+        el.style.display = 'none';
+        if (icon) icon.textContent = '▶';
+      }
+    }
+
+    // 11. Interactive Quiz Engine
+    let quizScore = 0;
+    let quizTotal = 0;
+    let currentQuizQuestion = null;
+
+    function generateNewQuizQuestion() {
+      const allItems = [...INITIALS_DATA, ...FINALS_DATA];
+      const correctItem = allItems[Math.floor(Math.random() * allItems.length)];
+      const distractors = [];
+      while (distractors.length < 3) {
+        const cand = allItems[Math.floor(Math.random() * allItems.length)];
+        if (cand.id !== correctItem.id && !distractors.some(d => d.id === cand.id)) {
+          distractors.push(cand);
+        }
+      }
+      const options = [correctItem, ...distractors].sort(() => Math.random() - 0.5);
+      currentQuizQuestion = { correctItem, options, answered: false };
+
+      document.getElementById('quizCategoryBadge').textContent = `分類：${correctItem.category}`;
+      document.getElementById('quizHanziHint').textContent = correctItem.wordHanzi;
+      document.getElementById('quizSentenceHint').textContent = `例句：「${correctItem.sentence}」`;
+
+      const fb = document.getElementById('quizFeedbackBox');
+      if (fb) fb.style.display = 'none';
+
+      const grid = document.getElementById('quizOptionsGrid');
+      grid.innerHTML = options.map((opt, idx) => `
+        <button type="button" onclick="submitQuizAnswer('${opt.id}')" class="quiz-opt-btn mondrian-btn bg-[#FAF7F0] hover:bg-[#F2C12E]/40 p-4 rounded-xl text-left flex flex-col justify-between">
+          <div class="text-xs font-bold text-zinc-500">選項 ${idx + 1}（音標：${opt.symbol}）</div>
+          <div class="text-lg font-black text-zinc-900 mt-1">${opt.wordTailo}</div>
+          <div class="text-xs font-bold text-[#1B4D89] mt-1">原調 ${opt.origTone} ➔ 變調 ${opt.sandhiTone}</div>
+        </button>
+      `).join('');
+    }
+
+    function submitQuizAnswer(selectedId) {
+      if (!currentQuizQuestion || currentQuizQuestion.answered) return;
+      currentQuizQuestion.answered = true;
+      quizTotal += 1;
+      const isCorrect = selectedId === currentQuizQuestion.correctItem.id;
+      if (isCorrect) quizScore += 1;
+
+      document.getElementById('quizScoreText').textContent = `${quizScore} / ${quizTotal}`;
+      const fb = document.getElementById('quizFeedbackBox');
+      const c = currentQuizQuestion.correctItem;
+      fb.style.display = 'block';
+      if (isCorrect) {
+        fb.className = 'p-4 mondrian-border rounded-xl text-xs sm:text-sm font-bold bg-emerald-100 text-emerald-950';
+        fb.innerHTML = `✅ 答對了！「${c.wordHanzi}」的台羅拼音正是 <strong>${c.wordTailo}</strong>（原調 ${c.origTone} ➔ 變調 ${c.sandhiTone}）。`;
+      } else {
+        fb.className = 'p-4 mondrian-border rounded-xl text-xs sm:text-sm font-bold bg-red-100 text-red-950';
+        fb.innerHTML = `❌ 可惜！正確答案是 <strong>${c.wordTailo}（${c.wordHanzi}）</strong>，原調 ${c.origTone} ➔ 變調 ${c.sandhiTone}。`;
+      }
+      playPhonemeAudio(c.symbol, c.wordTailo, c.wordHanzi, c.moeId);
+    }
+
+    // 12. Tab Switching Logic (Explicit inline style display = 'block' / 'none')
+    function switchTab(tabName) {
+      const tabs = ['overview', 'initials', 'finals', 'tones', 'quiz'];
+      tabs.forEach(t => {
+        const sec = document.getElementById('tab-' + t);
+        if (sec) {
+          sec.style.display = (t === tabName) ? 'block' : 'none';
+        }
+      });
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabName) {
+          btn.classList.add('bg-[#D9381E]', 'text-white');
+          btn.classList.remove('hover:bg-zinc-800');
+        } else {
+          btn.classList.remove('bg-[#D9381E]', 'text-white');
+          btn.classList.add('hover:bg-zinc-800');
+        }
+      });
+    }
+
+    // 13. Initialization & Event Listeners
+    window.addEventListener('DOMContentLoaded', () => {
+      renderInitialsGrid();
+      renderFinalsGrid();
+      renderTonesSection();
+      updateSynthesizerView();
+      generateNewQuizQuestion();
+
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchTab(btn.getAttribute('data-tab'));
+        });
+      });
+
+      document.querySelectorAll('.init-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentInitialFilter = btn.getAttribute('data-init-filter');
+          document.querySelectorAll('.init-filter-btn').forEach(b => b.classList.remove('filter-active'));
+          btn.classList.add('filter-active');
+          renderInitialsGrid();
+        });
+      });
+
+      document.querySelectorAll('.final-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentFinalFilter = btn.getAttribute('data-final-filter');
+          document.querySelectorAll('.final-filter-btn').forEach(b => b.classList.remove('filter-active'));
+          btn.classList.add('filter-active');
+          renderFinalsGrid();
+        });
+      });
+
+      const finalSearch = document.getElementById('finalSearchInput');
+      if (finalSearch) {
+        finalSearch.addEventListener('input', () => renderFinalsGrid());
+      }
+
+      ['synInitial', 'synFinal', 'synTone', 'chkReadingRule'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', updateSynthesizerView);
+      });
+
+      document.getElementById('btnPlaySynthesizer').addEventListener('click', () => {
+        const initVal = document.getElementById('synInitial').value;
+        const finalVal = document.getElementById('synFinal').value;
+        const toneVal = parseInt(document.getElementById('synTone').value, 10) || 1;
+        const chkReading = document.getElementById('chkReadingRule').checked;
+        const playTone = (chkReading && toneVal === 2) ? 1 : toneVal;
+        const { syllable } = applyTailoToneMark(initVal, finalVal, toneVal);
+        showNowPlaying(`${syllable} (第${toneVal}調)`, chkReading && toneVal === 2 ? '套用規則：看著第2聲唸第1聲' : 'Web Audio 聲學合成發音');
+        synthesizeTailoSyllableAudio(initVal, finalVal, playTone, 0);
+        setTimeout(hideNowPlaying, 800);
+      });
+
+      document.getElementById('btnPlaySandhiSynthesizer').addEventListener('click', () => {
+        const initVal = document.getElementById('synInitial').value;
+        const finalVal = document.getElementById('synFinal').value;
+        const toneVal = parseInt(document.getElementById('synTone').value, 10) || 1;
+        const sandhiTone = getSandhiTargetTone(toneVal, finalVal);
+        const origRes = applyTailoToneMark(initVal, finalVal, toneVal);
+        const sandhiRes = applyTailoToneMark(initVal, finalVal, sandhiTone);
+        showNowPlaying(`${origRes.syllable} ➔ ${sandhiRes.syllable}`, `連讀變調示範：第${toneVal}調 變 第${sandhiTone}調`);
+        synthesizeTailoSyllableAudio(initVal, finalVal, sandhiTone, 0);
+        setTimeout(hideNowPlaying, 800);
+      });
+
+      document.getElementById('btnParseCustom').addEventListener('click', () => {
+        const raw = document.getElementById('customTailoInput').value.trim();
+        if (!raw) return;
+        const parts = raw.split(/[-\s]+/).filter(Boolean);
+        if (parts.length > 0) {
+          const first = stripDiacriticsAndDetectTone(parts[0]);
+          const initEl = document.getElementById('synInitial');
+          const finalEl = document.getElementById('synFinal');
+          const toneEl = document.getElementById('synTone');
+          if (initEl && Array.from(initEl.options).some(o => o.value === first.initial)) {
+            initEl.value = first.initial;
+          }
+          if (finalEl && Array.from(finalEl.options).some(o => o.value === first.finalStr)) {
+            finalEl.value = first.finalStr;
+          }
+          if (toneEl) toneEl.value = String(first.tone);
+          updateSynthesizerView();
+
+          const formattedParts = parts.map(p => {
+            const parsed = stripDiacriticsAndDetectTone(p);
+            return applyTailoToneMark(parsed.initial, parsed.finalStr, parsed.tone).syllable;
+          });
+          document.getElementById('synOutputTailo').textContent = formattedParts.join('-');
+          playPhonemeAudio(raw, formattedParts.join('-'), '自訂拼讀', '');
+        }
+      });
+
+      document.getElementById('btnStopAudio').addEventListener('click', stopAllAudio);
+
+      document.getElementById('btnCloseLightbox').addEventListener('click', closeLightbox);
+      document.getElementById('lightboxBackdrop').addEventListener('click', closeLightbox);
+      document.getElementById('lbBtnPlayWord').addEventListener('click', () => {
+        if (currentLightboxItem) {
+          playPhonemeAudio(currentLightboxItem.symbol, currentLightboxItem.wordTailo, currentLightboxItem.wordHanzi, currentLightboxItem.moeId);
+        }
+      });
+      document.getElementById('lbBtnPlayPhoneme').addEventListener('click', () => {
+        if (currentLightboxItem) {
+          const parsed = stripDiacriticsAndDetectTone(currentLightboxItem.wordTailo.split(/[-\s]+/)[0]);
+          showNowPlaying(`音標 [${currentLightboxItem.symbol}]`, '單音節聲學合成示範');
+          synthesizeTailoSyllableAudio(parsed.initial, parsed.finalStr, parsed.tone, 0);
+          setTimeout(hideNowPlaying, 800);
+        }
+      });
+      document.getElementById('lbBtnPlaySentence').addEventListener('click', () => {
+        if (currentLightboxItem) {
+          playPhonemeAudio(currentLightboxItem.symbol, currentLightboxItem.wordTailo, currentLightboxItem.sentence, currentLightboxItem.moeId);
+        }
+      });
+
+      document.getElementById('btnNewQuiz').addEventListener('click', generateNewQuizQuestion);
+      document.getElementById('btnQuizPlayAudio').addEventListener('click', () => {
+        if (currentQuizQuestion && currentQuizQuestion.correctItem) {
+          const c = currentQuizQuestion.correctItem;
+          playPhonemeAudio(c.symbol, c.wordTailo, c.wordHanzi, c.moeId);
+        }
+      });
+
+      const gModal = document.getElementById('gdriveModal');
+      document.getElementById('btnOpenGDriveModal').addEventListener('click', () => {
+        gModal.style.display = 'flex';
+      });
+      document.getElementById('btnCloseGDriveModal').addEventListener('click', () => {
+        gModal.style.display = 'none';
+      });
+      document.getElementById('gdriveBackdrop').addEventListener('click', () => {
+        gModal.style.display = 'none';
+      });
+      document.getElementById('btnConvertGDrive').addEventListener('click', () => {
+        const val = document.getElementById('gdriveInputUrl').value.trim();
+        const fixed = fixGoogleDriveImageUrl(val);
+        document.getElementById('gdriveOutputResult').textContent = fixed
+          ? `直連預覽網址：${fixed}`
+          : '請輸入有效的 Google Drive 連結';
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeLightbox();
+          gModal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
